@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberPrivacy Matrix - Personal Surveillance Profile & Risk Analysis</title>
+    <meta name="description"
+        content="Analyze data harvesting, permission matrices, and unified surveillance risk profiles across your daily mobile and web applications.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <div class="brand-title">
+                    CyberPrivacy Matrix
+                    <span class="brand-badge" id="brandSubtitle">Surveillance Index</span>
+                </div>
+
+                <!-- Top 10 World Languages Selector -->
+                <div class="lang-selector">
+                    <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">🇬🇧 EN</button>
+                    <button class="lang-btn" data-lang="es" onclick="setLanguage('es')">🇪🇸 ES</button>
+                    <button class="lang-btn" data-lang="de" onclick="setLanguage('de')">🇩🇪 DE</button>
+                    <button class="lang-btn" data-lang="fr" onclick="setLanguage('fr')">🇫🇷 FR</button>
+                    <button class="lang-btn" data-lang="pt" onclick="setLanguage('pt')">🇵🇹 PT</button>
+                    <button class="lang-btn" data-lang="it" onclick="setLanguage('it')">🇮🇹 IT</button>
+                    <button class="lang-btn" data-lang="tr" onclick="setLanguage('tr')">🇹🇷 TR</button>
+                    <button class="lang-btn" data-lang="ru" onclick="setLanguage('ru')">🇷🇺 RU</button>
+                    <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')">🇨🇳 ZH</button>
+                    <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')">🇯🇵 JA</button>
+                </div>
+            </div>
+            <h1 id="heroTitle"
+                style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem; letter-spacing: -0.02em;">
+                Personal Surveillance Matrix</h1>
+            <p id="heroDesc">Analyze data harvesting, permission matrices, and unified surveillance risk profiles
+                across your daily mobile and web applications.</p>
+        </header>
+
+        <!-- Controls Bar -->
+        <div class="controls-bar">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput"
+                    placeholder="Search or add any app (e.g., Discord, X, Exchange, Zoom)...">
+                <button class="btn-primary" id="btnLiveSearch"><span id="btnSearchStore">Search Store</span></button>
+                <button class="btn-secondary" id="btnAddCustom"><span id="btnAddCustomText">Add Custom</span></button>
+            </div>
+            <div class="category-pills">
+                <button class="pill active" data-category="all" id="catAll">All</button>
+                <button class="pill" data-category="social" id="catSocial">Social</button>
+                <button class="pill" data-category="communication" id="catCommunication">Communication</button>
+                <button class="pill" data-category="productivity" id="catProductivity">Productivity</button>
+                <button class="pill" data-category="entertainment" id="catEntertainment">Entertainment</button>
+            </div>
+        </div>
+
+        <!-- Section Title -->
+        <div class="section-header">
+            <h2 id="section1Title">Select or Add Applications</h2>
+            <span id="section1Subtitle">Click badges to inspect privacy policies</span>
+        </div>
+
+        <!-- App Grid -->
+        <div class="app-grid" id="appGrid">
+            <!-- Dynamic Cards rendering from apps_database.json & Store Search -->
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Left Panel: Score & Radar Chart -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title" id="section2Title">Surveillance Summary</div>
+                </div>
+
+                <div class="score-box">
+                    <div class="score-value" id="scoreValue">0</div>
+                    <div class="score-label" id="scoreLabel">Unified Surveillance Index (0-100)</div>
+                    <div class="criticality-badge" id="criticalityBadge">No App Selected</div>
+                </div>
+
+                <div class="chart-wrapper">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Right Panel: Detailed Analysis -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title" id="section3Title">Detailed Threat & Permission Analysis</div>
+                </div>
+
+                <div class="detail-card">
+                    <h3 id="dataTypesTitle">📊 Harvested Data Types</h3>
+                    <div class="tag-cloud" id="dataCollectedTags">
+                        <span class="tag">Select applications above...</span>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <h3 id="sharedWithTitle">🔗 Third-Party Destinations</h3>
+                    <div class="tag-cloud" id="sharedWithTags">
+                        <span class="tag">Select applications above...</span>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <h3 id="permissionsTitle">🔐 Requested Device Permissions</h3>
+                    <div class="tag-cloud" id="permissionsTags">
+                        <span class="tag">Select applications above...</span>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <h3 id="risksTitle">⚠️ Surveillance Threat Scenarios</h3>
+                    <ul class="risk-list" id="riskList">
+                        <li>Select applications above to generate threat analysis.</li>
+                    </ul>
+                </div>
+
+                <div class="detail-card">
+                    <h3 id="tipsTitle">🛡️ Privacy Hardening Blueprint</h3>
+                    <ul class="tip-list" id="tipList">
+                        <li>Privacy hardening recommendations will appear here.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Store Details / Results -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <h3 id="modalTitle" style="margin-bottom: 1rem; color: var(--text-primary); font-weight: 700;">Details</h3>
+            <div id="modalBody">
+                <!-- Modal Body Content -->
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
