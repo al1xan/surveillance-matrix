@@ -1,6 +1,11 @@
 /**
- * CyberPrivacy Matrix - 100% Bulletproof Multi-Language Engine v6
- * Comprehensive Risk & Tip Coverage for All 12 Database Apps + Store Additions
+ * CyberPrivacy Matrix - 100% Bulletproof Multi-Language Engine v7
+ * Features:
+ * - Direct Key Matching
+ * - Reverse-Lookup Fallback Engine
+ * - Explicit Window Exposing for all inline event handlers (setLanguage, showTosdrModal, etc.)
+ * - Image OnError fallback to emoji icon if CDN image fails
+ * - Cache-Busting ?v=7
  */
 
 let appsDataStore = [];
@@ -46,7 +51,7 @@ const termsDict = {
     "Work Experience & Salary Estimates": { en: "Work Experience & Salary Estimates", tr: "İş Deneyimi & Maaş Skalası", es: "Experiencia laboral y salario", de: "Berufserfahrung & Gehalt", fr: "Expérience & salaire", pt: "Experiência profissional e salário", it: "Esperienza lavorativa e stipendio", ru: "Опыт работы и зарплата", zh: "工作经验与薪资", ja: "職歴・推定年収" },
     "Educational History": { en: "Educational History", tr: "Eğitim Geçmişi", es: "Historial educativo", de: "Bildungsweg", fr: "Formation académique", pt: "Histórico acadêmico", it: "Percorso di studi", ru: "Образование", zh: "教育背景", ja: "学歴" },
     "Corporate Connections": { en: "Corporate Connections", tr: "Kurumsal Bağlantılar", es: "Conexiones corporativas", de: "Unternehmensnetzwerk", fr: "Réseau professionnel", pt: "Conexões corporativas", it: "Connessioni aziendali", ru: "Деловые связи", zh: "企业人脉", ja: "社内人脈" },
-    "Job Searches & Company Views": { en: "Job Searches & Company Views", tr: "Baktığınız İlanlar & Şirketler", es: "Búsquedas de empleo y empresas", de: "Jobsuche & Firmenaufrufe", fr: "Recherches d'emploi & entreprises", pt: "Pesquisas de emprego e empresas", it: "Ricerche di trabalho e aziende", ru: "Поиск работы и просмотры", zh: "求职搜索与职位浏览", ja: "求人検索・企業閲覧" },
+    "Job Searches & Company Views": { en: "Job Searches & Company Views", tr: "Baktığınız İlanlar & Şirketler", es: "Búsquedas de empleo y empresas", de: "Jobsuche & Firmenaufrufe", fr: "Recherches d'emploi & entreprises", pt: "Pesquisas de emprego e empresas", it: "Ricerche di lavoro e aziende", ru: "Поиск работы и просмотры", zh: "求职搜索与职位浏览", ja: "求人検索・企業閲覧" },
     "Professional Direct Messages": { en: "Professional Direct Messages", tr: "Mesajlaşmalar", es: "Mensajes profesionales", de: "Berufliche Nachrichten", fr: "Messages professionnels", pt: "Mensagens profissionais", it: "Messaggi professionali", ru: "Деловая переписка", zh: "职场私信", ja: "ビジネスDM" },
     "IP Address & Device Details": { en: "IP Address & Device Details", tr: "IP Adresi & Cihaz Bilgisi", es: "Dirección IP y detalles", de: "IP-Adresse & Gerätedetails", fr: "Adresse IP & détails appareil", pt: "Endereço IP e detalhes", it: "Indirizzo IP e dettagli", ru: "IP-адрес и детали устройства", zh: "IP地址与设备详情", ja: "IPアドレスとデバイス詳細" },
     "Joined Channels & Groups": { en: "Joined Channels & Groups", tr: "Katılınan Gruplar & Kanallar", es: "Canales y grupos unidos", de: "Beigetretene Kanäle & Gruppen", fr: "Canaux & groupes rejoints", pt: "Canais e grupos integrados", it: "Canali e gruppi seguiti", ru: "Подписанные каналы и группы", zh: "加入的频道与群组", ja: "参加チャンネル・グループ" },
@@ -73,12 +78,22 @@ const termsDict = {
     "IP Address & Device Fingerprint": { en: "IP Address & Device Fingerprint", tr: "IP Adresi & Cihaz Parmak İzi", es: "Dirección IP y huella digital", de: "IP-Adresse & Geräte-Fingerabdruck", fr: "Adresse IP & empreinte appareil", pt: "Endereço IP e impressão digital", it: "Indirizzo IP e impronta dispositivo", ru: "IP-адрес и отпечаток устройства", zh: "IP地址与设备指纹", ja: "IPアドレスとデバイス識別子" },
     "Account Info & Emails": { en: "Account Info & Emails", tr: "Hesap Bilgileri & E-postalar", es: "Información de cuenta y correos", de: "Kontoinformationen & E-Mails", fr: "Infos compte & e-mails", pt: "Informações da conta e e-mails", it: "Info account e e-mail", ru: "Данные аккаунта и почта", zh: "账户信息与邮件", ja: "アカウント情報とメール" },
     "Content & File Attachments": { en: "Content & File Attachments", tr: "İçerik & Dosya Ekleri", es: "Contenido y archivos adjuntos", de: "Inhalte & Dateianhänge", fr: "Contenu & pièces jointes", pt: "Conteúdo e anexos", it: "Contenuto e allegati", ru: "Контент и файлы", zh: "内容与文件附件", ja: "コンテンツと添付ファイル" },
-    "Work Habits": { en: "Work Habits", tr: "Çalışma Alışkanlıkları", es: "Hábitos de trabajo", de: "Arbeitsgewohnheiten", fr: "Habitudes de travail", pt: "Habitudes de trabalho", it: "Abitudini lavorative", ru: "Рабочие привычки", zh: "工作习惯", ja: "業務習慣" },
+    "Work Habits": { en: "Work Habits", tr: "Çalışma Alışkanlıkları", es: "Hábitos de trabajo", de: "Arbeitsgewohnheiten", fr: "Habitudes de travail", pt: "Habitudes de travail", it: "Abitudini lavorative", ru: "Рабочие привычки", zh: "工作习惯", ja: "業務習慣" },
     "Device ID & IP": { en: "Device ID & IP", tr: "Cihaz ID & IP", es: "ID de dispositivo e IP", de: "Geräte-ID & IP", fr: "ID appareil & IP", pt: "ID do dispositivo e IP", it: "ID dispositivo e IP", ru: "ID устройства и IP", zh: "设备ID与IP", ja: "デバイスIDとIP" },
     "Phone Number / Account": { en: "Phone Number / Account", tr: "Telefon Numarası / Hesap", es: "Número de teléfono / Cuenta", de: "Telefonnummer / Konto", fr: "Numéro de téléphone / Compte", pt: "Número de telefone / Conta", it: "Numero di telefono / Account", ru: "Номер телефона / Аккаунт", zh: "电话号码/账户", ja: "電話番号/アカウント" },
     "Delivery Address & Location": { en: "Delivery Address & Location", tr: "Teslimat Adresi & Konum", es: "Dirección de entrega y ubicación", de: "Lieferadresse & Standort", fr: "Adresse de livraison & localisation", pt: "Endereço de entrega e localização", it: "Indirizzo di consegna e posizione", ru: "Адрес доставки и локация", zh: "配送地址与位置", ja: "配達先住所と位置情報" },
     "Purchase History": { en: "Purchase History", tr: "Satın Alım Geçmişi", es: "Historial de compras", de: "Kaufverlauf", fr: "Historique d'achats", pt: "Histórico de compras", it: "Cronologia acquisti", ru: "История покупок", zh: "购买历史", ja: "購入履歴" },
-    "Device IP Info": { en: "Device IP Info", tr: "Cihaz IP Bilgisi", es: "Información IP del dispositivo", de: "Geräte-IP-Information", fr: "Information IP appareil", pt: "Informação IP do dispositivo", it: "Info IP dispositivo", ru: "Информация IP устройства", zh: "设备IP信息", ja: "デバイスIP情報" }
+    "Device IP Info": { en: "Device IP Info", tr: "Cihaz IP Bilgisi", es: "Información IP del dispositivo", de: "Geräte-IP-Information", fr: "Information IP appareil", pt: "Informação IP do dispositivo", it: "Info IP dispositivo", ru: "Informazioni IP del dispositivo", zh: "设备IP信息", ja: "デバイスIP情報" },
+
+    // ─── Third-Party Destinations ───
+    "Data Brokers": { en: "Data Brokers", tr: "Veri Broker'ları", es: "Corredores de datos", de: "Datenhändler", fr: "Courtiers en données", pt: "Corretores de dados", it: "Broker di dati", ru: "Дата-брокеры", zh: "数据经纪商", ja: "データブローカー" },
+    "Advertisers (Targeted Ads)": { en: "Advertisers (Targeted Ads)", tr: "Reklamverenler (Hedefli Reklam)", es: "Anunciantes (Anuncios dirigidos)", de: "Werbepartner (Zielgerichtete Werbung)", fr: "Annonceurs (Publicités ciblées)", pt: "Anunciantes (Anúncios direcionados)", it: "Inserzionisti (Annunci mirati)", ru: "Рекламодатели (Таргетированная реклама)", zh: "广告商(定向广告)", ja: "広告主 (ターゲティング広告)" },
+    "Meta Companies": { en: "Meta Companies", tr: "Meta Şirketler Grubu", es: "Empresas Meta", de: "Meta-Konzern", fr: "Groupe Meta", pt: "Empresas Meta", it: "Gruppo Meta", ru: "Группа компаний Meta", zh: "Meta公司集团", ja: "Metaグループ" },
+    "Grok AI / xAI Training": { en: "Grok AI / xAI Training", tr: "Grok AI / xAI Eğitimi", es: "Entrenamiento de Grok AI / xAI", de: "Grok AI / xAI Training", fr: "Entraînement Grok AI / xAI", pt: "Treino do Grok AI / xAI", it: "Addestramento Grok AI / xAI", ru: "Обучение Grok AI / xAI", zh: "Grok AI / xAI 训练", ja: "Grok AI / xAI 学習" },
+    "Google Ad & Analytics Systems": { en: "Google Ad & Analytics Systems", tr: "Google Reklam & Analitik Sistemleri", es: "Sistemas de publicidad y análisis de Google", de: "Google Werbe- & Analysesysteme", fr: "Systèmes publicitaires et analytiques Google", pt: "Sistemas de anúncios e análise do Google", it: "Sistemi pubblicitari e analitici Google", ru: "Рекламные и аналитические системы Google", zh: "Google广告与分析系统", ja: "Google広告・分析システム" },
+    "Content Creators (Analytics)": { en: "Content Creators (Analytics)", tr: "İçerik Üreticileri (Analitik)", es: "Creadores de contenido (Analítica)", de: "Content Creator (Analysen)", fr: "Créateurs de contenu (Analyses)", pt: "Criadores de conteúdo (Análises)", it: "Creatori di contenuti (Analisi)", ru: "Создатели контента (Аналитика)", zh: "内容创作者(分析)", ja: "クリエイター (アナリティクス)" },
+    "Google AI Training Systems": { en: "Google AI Training Systems", tr: "Google AI Servisleri", es: "Sistemas de entrenamiento IA de Google", de: "Google KI-Trainingssysteme", fr: "Systèmes d'entraînement IA Google", pt: "Sistemas de treinamento de IA do Google", it: "Sistemi addestramento IA Google", ru: "Системы обучения Google ИИ", zh: "Google AI训练系统", ja: "Google AI学習システム" },
+    "Google AI Training Partners": { en: "Google AI Training Partners", tr: "Google LLM Eğitim Ortaklığı", es: "Socios de entrenamiento IA de Google", de: "Google KI-Trainingspartner", fr: "Partenaires d'entraînement IA Google", pt: "Parceiros de treinamento de IA do Google", it: "Partner addestramento IA Google", ru: "Партнеры обучения Google ИИ", zh: "Google AI训练合作伙伴", ja: "Google AI学習パートナー" }
 };
 
 // ─── App-Specific Multi-Language Risks & Tips Dictionary (ALL 12 APPS INCLUDED) ───
@@ -330,8 +345,8 @@ function setLanguage(lang) {
 
 async function loadAppsDatabase() {
     try {
-        // Cache-busting URL parameter ?v=6 to force fresh database load
-        const response = await fetch('./apps_database.json?v=6');
+        // Cache-busting URL parameter ?v=7 to force fresh database load
+        const response = await fetch('./apps_database.json?v=7');
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         appsDataStore = data.apps || [];
@@ -415,7 +430,7 @@ function renderAppGrid() {
 
         let iconHtml = `<div class="app-icon">${app.icon || '📱'}</div>`;
         if (app.icon_url) {
-            iconHtml = `<img class="app-icon-img" src="${app.icon_url}" alt="${app.name}" loading="lazy">`;
+            iconHtml = `<img class="app-icon-img" src="${app.icon_url}" alt="${app.name}" loading="lazy" onerror="this.onerror=null; this.outerHTML='<div class=\\'app-icon\\'>${app.icon || '📱'}</div>';">`;
         }
 
         const verifiedHtml = app.is_verified ? `<span class="app-verified">${dict.verifiedBadge}</span>` : '';
@@ -846,6 +861,17 @@ function updateRadarChart(dataValues) {
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
+// EXPOSE ALL FUNCTIONS TO WINDOW SCOPE FOR INLINE HTML EVENT HANDLERS
+// ────────────────────────────────────────────────────────────────────────────────
+window.setLanguage = setLanguage;
+window.toggleAppSelection = toggleAppSelection;
+window.showTosdrModal = showTosdrModal;
+window.selectAppFromSearchResults = selectAppFromSearchResults;
+window.handlePrecisionStoreSearch = handlePrecisionStoreSearch;
+window.openCustomAppModal = openCustomAppModal;
+window.closeModal = closeModal;
+
+// ────────────────────────────────────────────────────────────────────────────────
 // Modals & Utilities
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -872,7 +898,7 @@ function showTosdrModal(appId) {
         }
 
         const iconHeader = app.icon_url
-            ? `<img src="${app.icon_url}" style="width: 42px; height: 42px; border-radius: 10px; object-fit: cover;">`
+            ? `<img src="${app.icon_url}" style="width: 42px; height: 42px; border-radius: 10px; object-fit: cover;" onerror="this.onerror=null; this.outerHTML='<div style=\\'font-size:1.6rem;\\'>${app.icon || '📱'}</div>';">`
             : `<div style="font-size: 1.6rem;">${app.icon || '📱'}</div>`;
 
         modalBody.innerHTML = `
