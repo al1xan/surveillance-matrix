@@ -1,9 +1,6 @@
 /**
- * CyberPrivacy Matrix - 100% Bulletproof Multi-Language Engine v5
- * Features:
- * - Direct Key Matching
- * - Reverse-Lookup Fallback (Guarantees zero Turkish leaks even for unexpected legacy data)
- * - Cache-Busting ?v=4
+ * CyberPrivacy Matrix - 100% Bulletproof Multi-Language Engine v6
+ * Comprehensive Risk & Tip Coverage for All 12 Database Apps + Store Additions
  */
 
 let appsDataStore = [];
@@ -49,7 +46,7 @@ const termsDict = {
     "Work Experience & Salary Estimates": { en: "Work Experience & Salary Estimates", tr: "İş Deneyimi & Maaş Skalası", es: "Experiencia laboral y salario", de: "Berufserfahrung & Gehalt", fr: "Expérience & salaire", pt: "Experiência profissional e salário", it: "Esperienza lavorativa e stipendio", ru: "Опыт работы и зарплата", zh: "工作经验与薪资", ja: "職歴・推定年収" },
     "Educational History": { en: "Educational History", tr: "Eğitim Geçmişi", es: "Historial educativo", de: "Bildungsweg", fr: "Formation académique", pt: "Histórico acadêmico", it: "Percorso di studi", ru: "Образование", zh: "教育背景", ja: "学歴" },
     "Corporate Connections": { en: "Corporate Connections", tr: "Kurumsal Bağlantılar", es: "Conexiones corporativas", de: "Unternehmensnetzwerk", fr: "Réseau professionnel", pt: "Conexões corporativas", it: "Connessioni aziendali", ru: "Деловые связи", zh: "企业人脉", ja: "社内人脈" },
-    "Job Searches & Company Views": { en: "Job Searches & Company Views", tr: "Baktığınız İlanlar & Şirketler", es: "Búsquedas de empleo y empresas", de: "Jobsuche & Firmenaufrufe", fr: "Recherches d'emploi & entreprises", pt: "Pesquisas de emprego e empresas", it: "Ricerche di lavoro e aziende", ru: "Поиск работы и просмотры", zh: "求职搜索与职位浏览", ja: "求人検索・企業閲覧" },
+    "Job Searches & Company Views": { en: "Job Searches & Company Views", tr: "Baktığınız İlanlar & Şirketler", es: "Búsquedas de empleo y empresas", de: "Jobsuche & Firmenaufrufe", fr: "Recherches d'emploi & entreprises", pt: "Pesquisas de emprego e empresas", it: "Ricerche di trabalho e aziende", ru: "Поиск работы и просмотры", zh: "求职搜索与职位浏览", ja: "求人検索・企業閲覧" },
     "Professional Direct Messages": { en: "Professional Direct Messages", tr: "Mesajlaşmalar", es: "Mensajes profesionales", de: "Berufliche Nachrichten", fr: "Messages professionnels", pt: "Mensagens profissionais", it: "Messaggi professionali", ru: "Деловая переписка", zh: "职场私信", ja: "ビジネスDM" },
     "IP Address & Device Details": { en: "IP Address & Device Details", tr: "IP Adresi & Cihaz Bilgisi", es: "Dirección IP y detalles", de: "IP-Adresse & Gerätedetails", fr: "Adresse IP & détails appareil", pt: "Endereço IP e detalhes", it: "Indirizzo IP e dettagli", ru: "IP-адрес и детали устройства", zh: "IP地址与设备详情", ja: "IPアドレスとデバイス詳細" },
     "Joined Channels & Groups": { en: "Joined Channels & Groups", tr: "Katılınan Gruplar & Kanallar", es: "Canales y grupos unidos", de: "Beigetretene Kanäle & Gruppen", fr: "Canaux & groupes rejoints", pt: "Canais e grupos integrados", it: "Canali e gruppi seguiti", ru: "Подписанные каналы и группы", zh: "加入的频道与群组", ja: "参加チャンネル・グループ" },
@@ -76,15 +73,15 @@ const termsDict = {
     "IP Address & Device Fingerprint": { en: "IP Address & Device Fingerprint", tr: "IP Adresi & Cihaz Parmak İzi", es: "Dirección IP y huella digital", de: "IP-Adresse & Geräte-Fingerabdruck", fr: "Adresse IP & empreinte appareil", pt: "Endereço IP e impressão digital", it: "Indirizzo IP e impronta dispositivo", ru: "IP-адрес и отпечаток устройства", zh: "IP地址与设备指纹", ja: "IPアドレスとデバイス識別子" },
     "Account Info & Emails": { en: "Account Info & Emails", tr: "Hesap Bilgileri & E-postalar", es: "Información de cuenta y correos", de: "Kontoinformationen & E-Mails", fr: "Infos compte & e-mails", pt: "Informações da conta e e-mails", it: "Info account e e-mail", ru: "Данные аккаунта и почта", zh: "账户信息与邮件", ja: "アカウント情報とメール" },
     "Content & File Attachments": { en: "Content & File Attachments", tr: "İçerik & Dosya Ekleri", es: "Contenido y archivos adjuntos", de: "Inhalte & Dateianhänge", fr: "Contenu & pièces jointes", pt: "Conteúdo e anexos", it: "Contenuto e allegati", ru: "Контент и файлы", zh: "内容与文件附件", ja: "コンテンツと添付ファイル" },
-    "Work Habits": { en: "Work Habits", tr: "Çalışma Alışkanlıkları", es: "Hábitos de trabajo", de: "Arbeitsgewohnheiten", fr: "Habitudes de travail", pt: "Habitudes de travail", it: "Abitudini lavorative", ru: "Рабочие привычки", zh: "工作习惯", ja: "業務習慣" },
+    "Work Habits": { en: "Work Habits", tr: "Çalışma Alışkanlıkları", es: "Hábitos de trabajo", de: "Arbeitsgewohnheiten", fr: "Habitudes de travail", pt: "Habitudes de trabalho", it: "Abitudini lavorative", ru: "Рабочие привычки", zh: "工作习惯", ja: "業務習慣" },
     "Device ID & IP": { en: "Device ID & IP", tr: "Cihaz ID & IP", es: "ID de dispositivo e IP", de: "Geräte-ID & IP", fr: "ID appareil & IP", pt: "ID do dispositivo e IP", it: "ID dispositivo e IP", ru: "ID устройства и IP", zh: "设备ID与IP", ja: "デバイスIDとIP" },
-    "Phone Number / Account": { en: "Phone Number / Account", tr: "Telefon Numarası / Hesap", es: "Número de teléfono / Cuenta", de: "Telefonnummer / Konto", fr: "Numéro de téléphone / Compte", pt: "Número de telefone / Conta", it: "Numero di telefone / Account", ru: "Номер телефона / Аккаунт", zh: "电话号码/账户", ja: "電話番号/アカウント" },
+    "Phone Number / Account": { en: "Phone Number / Account", tr: "Telefon Numarası / Hesap", es: "Número de teléfono / Cuenta", de: "Telefonnummer / Konto", fr: "Numéro de téléphone / Compte", pt: "Número de telefone / Conta", it: "Numero di telefono / Account", ru: "Номер телефона / Аккаунт", zh: "电话号码/账户", ja: "電話番号/アカウント" },
     "Delivery Address & Location": { en: "Delivery Address & Location", tr: "Teslimat Adresi & Konum", es: "Dirección de entrega y ubicación", de: "Lieferadresse & Standort", fr: "Adresse de livraison & localisation", pt: "Endereço de entrega e localização", it: "Indirizzo di consegna e posizione", ru: "Адрес доставки и локация", zh: "配送地址与位置", ja: "配達先住所と位置情報" },
     "Purchase History": { en: "Purchase History", tr: "Satın Alım Geçmişi", es: "Historial de compras", de: "Kaufverlauf", fr: "Historique d'achats", pt: "Histórico de compras", it: "Cronologia acquisti", ru: "История покупок", zh: "购买历史", ja: "購入履歴" },
     "Device IP Info": { en: "Device IP Info", tr: "Cihaz IP Bilgisi", es: "Información IP del dispositivo", de: "Geräte-IP-Information", fr: "Information IP appareil", pt: "Informação IP do dispositivo", it: "Info IP dispositivo", ru: "Информация IP устройства", zh: "设备IP信息", ja: "デバイスIP情報" }
 };
 
-// ─── App-Specific Multi-Language Risks & Tips Dictionary ───
+// ─── App-Specific Multi-Language Risks & Tips Dictionary (ALL 12 APPS INCLUDED) ───
 const appRisksDict = {
     facebook: {
         en: ["Off-App Web Activity: Meta Pixel tracks your browsing across third-party websites and links it to your profile.", "Family & Social Network Graph mapping correlates all your real-world relationships and political preferences."],
@@ -109,6 +106,30 @@ const appRisksDict = {
     chrome: {
         en: ["Full-spectrum web navigation profiling captures every URL, click, and search query.", "Hardware fingerprinting uniquely identifies your device across third-party ad networks."],
         tr: ["Tüm web gezinti profillemesi; girdiğiniz her URL'yi, tıklamayı ve aramayı kaydeder.", "Donanım parmak izi (Browser Fingerprinting) çerezler silinse bile cihazınızı tekil olarak tanır."]
+    },
+    linkedin: {
+        en: ["Corporate & financial profiling maps your exact salary bracket, title, and workplace network.", "Profile and messaging data are processed to train AI models unless manually opted out."],
+        tr: ["Kurumsal ve finansal profilleme pozisyonunuzu, maaş skalanızı ve iş çevrenizi haritalar.", "Profil ve mesajlaşma verileri aksi seçilmediği sürece yapay zeka modellerini eğitmek için işlenir."]
+    },
+    telegram: {
+        en: ["Standard cloud chats are NOT end-to-end encrypted by default and reside on Telegram servers.", "Public channel and group memberships reveal your personal and political interests."],
+        tr: ["Standart bulut sohbetleri varsayılan olarak uçtan uca şifreli değildir ve sunucularda saklanır.", "Genel kanal ve grup üyelikleriniz kişisel ve siyasi ilgi alanlarınızı ortaya koyar."]
+    },
+    x_twitter: {
+        en: ["Public posts and interactions are processed to train Grok AI and xAI models.", "Political and ideological profiling algorithms analyze every liked and shared tweet."],
+        tr: ["Kamuya açık gönderileriniz ve etkileşimleriniz Grok AI modellerini eğitmek için işlenir.", "Siyasi ve düşünsel profilleme algoritmaları beğendiğiniz her tweeti analiz eder."]
+    },
+    spotify: {
+        en: ["Emotional and mood profiling evaluates song choices and listening timestamps.", "Podcast category choices track political, religious, and personal development topics."],
+        tr: ["Duygusal ve ruh hali profillemesi dinlenen müzik türleri ve zamanları üzerinden yapılır.", "Podcast tercihleri siyasi, dini ve kişisel gelişim konularını ortaya çıkarır."]
+    },
+    youtube: {
+        en: ["Watch history and dwell times construct behavioral addiction and prediction models.", "Cross-device tracking unifies your viewing profile across TVs, phones, and desktops."],
+        tr: ["İzleme geçmişi ve duraklama süreleri davranışsal tahmin modelleri oluşturur.", "Çapraz cihaz takibi izleme profilinizi tüm cihazlarınızda birleştirir."]
+    },
+    reddit: {
+        en: ["Subreddit interest history is licensed to third-party AI companies for LLM training.", "Anonymous illusion: Interest footprints can be linked to your device IP."],
+        tr: ["Subreddit ilgi geçmişi yapay zeka şirketlerine LLM eğitimi için lisanslanır.", "Anonimlik illüzyonu: İlgi alanlarınız IP adresinizle ilişkilendirilebilir."]
     }
 };
 
@@ -136,6 +157,30 @@ const appTipsDict = {
     chrome: {
         en: ["Switch to a privacy-first browser (Brave, Firefox) and install uBlock Origin."],
         tr: ["Gizlilik odaklı bir tarayıcıya (Brave, Firefox) geçin ve uBlock Origin eklentisini kullanın."]
+    },
+    linkedin: {
+        en: ["Turn off 'Data Usage for AI Training' inside LinkedIn Data Privacy Settings."],
+        tr: ["LinkedIn Veri Gizliliği ayarlarından 'Yapay Zeka Eğitimi İçin Veri Kullanımı' seçeneğini kapatın."]
+    },
+    telegram: {
+        en: ["Use 'Secret Chat' mode for sensitive communications and set phone number visibility to 'Nobody'."],
+        tr: ["Hassas görüşmeler için 'Gizli Sohbet' modunu kullanın ve telefon numaranızı 'Hiç Kimse' yapın."]
+    },
+    x_twitter: {
+        en: ["Disable 'Grok Data Sharing' inside X Privacy and Safety settings."],
+        tr: ["X Gizlilik ve Güvenlik ayarlarından 'Grok Veri Paylaşımı' seçeneğini kapatın."]
+    },
+    spotify: {
+        en: ["Use 'Private Session' mode to hide listening history from algorithms."],
+        tr: ["Dinleme geçmişinizi algoritmalardan gizlemek için 'Gizli Oturum' modunu kullanın."]
+    },
+    youtube: {
+        en: ["Pause Watch History or configure a 3-month auto-delete schedule in Google Activity."],
+        tr: ["YouTube izleme geçmişini duraklatın veya Google Etkinliğim'den 3 aylık otomatik silme ayarlayın."]
+    },
+    reddit: {
+        en: ["Disable 'Search Engine Indexing' and personalized ads in Reddit privacy controls."],
+        tr: ["Reddit gizlilik ayarlarından 'Arama Motoru İndeksleme' ve kişiselleştirilmiş reklamları kapatın."]
     }
 };
 
@@ -285,8 +330,8 @@ function setLanguage(lang) {
 
 async function loadAppsDatabase() {
     try {
-        // Cache-busting URL parameter ?v=4 to force fresh database load
-        const response = await fetch('./apps_database.json?v=4');
+        // Cache-busting URL parameter ?v=6 to force fresh database load
+        const response = await fetch('./apps_database.json?v=6');
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         appsDataStore = data.apps || [];
@@ -665,18 +710,16 @@ function updateDashboard() {
 
         if (appRiskList) {
             appRiskList.forEach(r => allRisks.push(`<b>${app.name}:</b> ${r}`));
+        } else {
+            allRisks.push(`<b>${app.name}:</b> Processes device identifiers and interaction telemetry.`);
         }
+
         if (appTipList) {
             appTipList.forEach(t => allTips.push(`<b>${app.name}:</b> ${t}`));
+        } else {
+            allTips.push(`<b>${app.name}:</b> Review app permissions in device settings.`);
         }
     });
-
-    // Fallback for custom added apps
-    if (allRisks.length === 0) {
-        selectedApps.forEach(app => {
-            allRisks.push(`<b>${app.name}:</b> Processes device & network metadata.`);
-        });
-    }
 
     allRisks = Array.from(new Set(allRisks)).slice(0, 6);
     allTips = Array.from(new Set(allTips)).slice(0, 5);
