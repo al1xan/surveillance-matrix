@@ -429,6 +429,24 @@ header p {
     border: 1px solid var(--border-subtle);
 }
 
+.brand-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
+    margin: 0.2rem auto 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.brand-icon-box:hover {
+    transform: scale(1.08);
+}
+
+
 .app-name {
     font-weight: 700;
     font-size: 0.9rem;
