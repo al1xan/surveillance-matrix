@@ -356,7 +356,7 @@ def build_database():
         enriched_apps.append(merged_app)
         time.sleep(0.5)
 
-    output_path = "/Users/kafein/.gemini/antigravity-ide/scratch/surveillance_profile_app/apps_database.json"
+    output_path = "apps_database.json"
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump({"apps": enriched_apps, "generated_at": time.strftime("%Y-%m-%d %H:%M:%S")}, f, ensure_ascii=False, indent=2)
 
