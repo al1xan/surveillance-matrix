@@ -13,7 +13,7 @@
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
         rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="styles.css?v=7">
+    <link rel="stylesheet" href="styles.css?v=8">
 </head>
 
 <body>
@@ -23,28 +23,12 @@
             <div class="header-top">
                 <div class="brand-title">
                     CyberPrivacy Matrix
-                    <span class="brand-badge" id="brandSubtitle">Surveillance Index</span>
-                </div>
-
-                <!-- Top 10 World Languages Selector -->
-                <div class="lang-selector">
-                    <button class="lang-btn active" data-lang="en" onclick="window.setLanguage('en')">🇬🇧 EN</button>
-                    <button class="lang-btn" data-lang="es" onclick="window.setLanguage('es')">🇪🇸 ES</button>
-                    <button class="lang-btn" data-lang="de" onclick="window.setLanguage('de')">🇩🇪 DE</button>
-                    <button class="lang-btn" data-lang="fr" onclick="window.setLanguage('fr')">🇫🇷 FR</button>
-                    <button class="lang-btn" data-lang="pt" onclick="window.setLanguage('pt')">🇵🇹 PT</button>
-                    <button class="lang-btn" data-lang="it" onclick="window.setLanguage('it')">🇮🇹 IT</button>
-                    <button class="lang-btn" data-lang="tr" onclick="window.setLanguage('tr')">🇹🇷 TR</button>
-                    <button class="lang-btn" data-lang="ru" onclick="window.setLanguage('ru')">🇷🇺 RU</button>
-                    <button class="lang-btn" data-lang="zh" onclick="window.setLanguage('zh')">🇨🇳 ZH</button>
-                    <button class="lang-btn" data-lang="ja" onclick="window.setLanguage('ja')">🇯🇵 JA</button>
+                    <span class="brand-badge">Surveillance Index</span>
                 </div>
             </div>
-            <h1 id="heroTitle"
-                style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem; letter-spacing: -0.02em;">
+            <h1 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem; letter-spacing: -0.02em;">
                 Personal Surveillance Matrix</h1>
-            <p id="heroDesc">Analyze data harvesting, permission matrices, and unified surveillance risk profiles
-                across your daily mobile and web applications.</p>
+            <p>Analyze data harvesting, permission matrices, and unified surveillance risk profiles across your daily mobile and web applications.</p>
         </header>
 
         <!-- Controls Bar -->
@@ -52,23 +36,23 @@
             <div class="search-box">
                 <span class="search-icon">🔍</span>
                 <input type="text" id="searchInput"
-                    placeholder="Search or add any app (e.g., Discord, X, Exchange, Zoom)...">
-                <button class="btn-primary" id="btnLiveSearch"><span id="btnSearchStore">Search Store</span></button>
-                <button class="btn-secondary" id="btnAddCustom"><span id="btnAddCustomText">Add Custom</span></button>
+                    placeholder="Search or add any app (e.g., Discord, X, Zoom, Spotify)...">
+                <button class="btn-primary" id="btnLiveSearch">Search Store</button>
+                <button class="btn-secondary" id="btnAddCustom">Add Custom</button>
             </div>
             <div class="category-pills">
-                <button class="pill active" data-category="all" id="catAll">All</button>
-                <button class="pill" data-category="social" id="catSocial">Social</button>
-                <button class="pill" data-category="communication" id="catCommunication">Communication</button>
-                <button class="pill" data-category="productivity" id="catProductivity">Productivity</button>
-                <button class="pill" data-category="entertainment" id="catEntertainment">Entertainment</button>
+                <button class="pill active" data-category="all">All</button>
+                <button class="pill" data-category="social">Social</button>
+                <button class="pill" data-category="communication">Communication</button>
+                <button class="pill" data-category="productivity">Productivity</button>
+                <button class="pill" data-category="entertainment">Entertainment</button>
             </div>
         </div>
 
         <!-- Section Title -->
         <div class="section-header">
-            <h2 id="section1Title">Select or Add Applications</h2>
-            <span id="section1Subtitle">Click badges to inspect privacy policies</span>
+            <h2>Select or Add Applications</h2>
+            <span>Click badges to inspect privacy policies</span>
         </div>
 
         <!-- App Grid -->
@@ -81,12 +65,12 @@
             <!-- Left Panel: Score & Radar Chart -->
             <div class="panel">
                 <div class="panel-header">
-                    <div class="panel-title" id="section2Title">Surveillance Summary</div>
+                    <div class="panel-title">Surveillance Summary</div>
                 </div>
 
                 <div class="score-box">
                     <div class="score-value" id="scoreValue">0</div>
-                    <div class="score-label" id="scoreLabel">Unified Surveillance Index (0-100)</div>
+                    <div class="score-label">Unified Surveillance Index (0-100)</div>
                     <div class="criticality-badge" id="criticalityBadge">No App Selected</div>
                 </div>
 
@@ -98,39 +82,39 @@
             <!-- Right Panel: Detailed Analysis -->
             <div class="panel">
                 <div class="panel-header">
-                    <div class="panel-title" id="section3Title">Detailed Threat & Permission Analysis</div>
+                    <div class="panel-title">Detailed Threat & Permission Analysis</div>
                 </div>
 
                 <div class="detail-card">
-                    <h3 id="dataTypesTitle">📊 Harvested Data Types</h3>
+                    <h3>📊 Harvested Data Types</h3>
                     <div class="tag-cloud" id="dataCollectedTags">
                         <span class="tag">Select applications above...</span>
                     </div>
                 </div>
 
                 <div class="detail-card">
-                    <h3 id="sharedWithTitle">🔗 Third-Party Destinations</h3>
+                    <h3>🔗 Third-Party Destinations</h3>
                     <div class="tag-cloud" id="sharedWithTags">
                         <span class="tag">Select applications above...</span>
                     </div>
                 </div>
 
                 <div class="detail-card">
-                    <h3 id="permissionsTitle">🔐 Requested Device Permissions</h3>
+                    <h3>🔐 Requested Device Permissions</h3>
                     <div class="tag-cloud" id="permissionsTags">
                         <span class="tag">Select applications above...</span>
                     </div>
                 </div>
 
                 <div class="detail-card">
-                    <h3 id="risksTitle">⚠️ Surveillance Threat Scenarios</h3>
+                    <h3>⚠️ Surveillance Threat Scenarios</h3>
                     <ul class="risk-list" id="riskList">
                         <li>Select applications above to generate threat analysis.</li>
                     </ul>
                 </div>
 
                 <div class="detail-card">
-                    <h3 id="tipsTitle">🛡️ Privacy Hardening Blueprint</h3>
+                    <h3>🛡️ Privacy Hardening Blueprint</h3>
                     <ul class="tip-list" id="tipList">
                         <li>Privacy hardening recommendations will appear here.</li>
                     </ul>
@@ -150,7 +134,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=7"></script>
+    <script src="app.js?v=8"></script>
 </body>
 
 </html>
