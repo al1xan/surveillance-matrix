@@ -16,34 +16,25 @@
       },
       "exodus_trackers": 1,
       "data_types": [
-        "Telefon Numarası",
-        "Kişi Listesi (Rehber)",
-        "Cihaz ID & IP Adresi",
-        "Metadatalar (Arama Zamanı/Süresi)",
-        "Profil Resmi & Durum",
-        "Konum (Paylaşılırsa)"
+        "Phone Number",
+        "Contact Book",
+        "Device ID & IP Address",
+        "Metadata (Call Time/Duration)",
+        "Profile Picture & Status",
+        "Location (If Shared)"
       ],
       "shared_with": [
-        "Meta Şirketler Grubu",
-        "Kolluk Kuvvetleri (Talepler)",
-        "İç Analitik Servisleri"
+        "Meta Companies",
+        "Law Enforcement (Requests)",
+        "Internal Analytics Engines"
       ],
       "permissions": [
-        "Kişiler",
-        "Kamera",
-        "Mikrofon",
-        "Konum",
-        "Depolama/Galeri",
-        "Arka Plan Verisi"
-      ],
-      "risks": [
-        "Sosyal Bağlantı Haritası (Social Graphing): Kiminle ne zaman iletişim kurduğunuz Meta tarafından haritalanır.",
-        "E2E Şifreleme mesaj içeriğini korusa da metadatalar (arama sıklığı, kişi eşleşmeleri) profillemede kullanılır.",
-        "Şifrelenmemiş cloud yedeklemeleri (Google Drive / iCloud) sızıntılara veya yasal taleplere açıktır."
-      ],
-      "tips": [
-        "Uygulama içi 'Uçtan Uca Şifreli Yedekleme' seçeneğini aktif edin.",
-        "Minimum metadata toplayan ve açık kaynaklı Signal uygulamasını alternatif olarak değerlendirin."
+        "Contacts",
+        "Camera",
+        "Microphone",
+        "Location",
+        "Storage / Gallery",
+        "Background Data"
       ],
       "tosdr_grade": "E",
       "tosdr_points_count": 74,
@@ -67,26 +58,6 @@
           "title": "You are responsible for maintaining the security of your account and for the activities on your account",
           "badge": "info",
           "status": "approved"
-        },
-        {
-          "title": "Blocking first party cookies may limit your ability to use the service",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "The service can delete your account without prior notice and without a reason",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "The service is provided 'as is' and to be used at the users' sole risk",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "You are prohibited from attempting to gain unauthorized access to other computer systems",
-          "badge": "info",
-          "status": "approved"
         }
       ],
       "icon_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/85/0f/5c/850f5cdf-70c2-6c22-c96c-804e3fccd816/AppIcon-0-0-1x_U007epad-0-0-0-1-0-0-sRGB-0-85-220.png/512x512bb.jpg",
@@ -108,35 +79,26 @@
       },
       "exodus_trackers": 3,
       "data_types": [
-        "Yüz Biyometrisi (Filtreler)",
-        "İlgi Alanları & Tıklama Süreleri",
-        "DM İçerikleri & Fotoğraflar",
-        "Tam Konum (GPS)",
-        "Arama Geçmişi",
-        "Satın Alımlar & Kart Verisi"
+        "Facial Biometrics (Filters)",
+        "Interests & Dwell Times",
+        "Direct Message Content & Photos",
+        "Precise GPS Location",
+        "Search History",
+        "Purchases & Card Data"
       ],
       "shared_with": [
-        "Reklamverenler (Targeted Ads)",
-        "Veri Broker'ları",
-        "Meta Reklam Ağı",
-        "3. Taraf İçerik Ortakları"
+        "Advertisers (Targeted Ads)",
+        "Data Brokers",
+        "Meta Audience Network",
+        "Third-Party Content Partners"
       ],
       "permissions": [
-        "Kamera",
-        "Mikrofon",
-        "Konum",
-        "Fotoğraf Arşivi",
-        "Kişiler",
-        "Cihaz Parmak İzi"
-      ],
-      "risks": [
-        "Psikolojik Profilleme: Hangi gönderide kaç saniye durduğunuz, ruh haliniz ve ilgi alanlarınız algoritmik olarak işlenir.",
-        "Biyometrik Veri Toplama: Yüz filtreleri ve kamera kullanımı yüz geometrinizin haritalanmasında kullanılabilir.",
-        "Çapraz Facebook/WhatsApp Veri Birleştirmesi ile dijital ayak iziniz Meta sunucularında birleştirilir."
-      ],
-      "tips": [
-        "Hassas Konum (Precise Location) iznini kapatın.",
-        "Hesap ayarlarından 'Üçüncü Taraf Reklam Eşleştirmeleri'ni kısıtlayın."
+        "Camera",
+        "Microphone",
+        "Location",
+        "Photos & Gallery",
+        "Contacts",
+        "Device Fingerprint"
       ],
       "tosdr_grade": "E",
       "tosdr_points_count": 80,
@@ -147,37 +109,7 @@
           "status": "approved"
         },
         {
-          "title": "Usernames can be rejected for any reason",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
           "title": "This service uses third-party cookies for statistics",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "The service informs users that its privacy policy does not apply to third party websites",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "You agree to defend, indemnify, and hold the service harmless in case of a claim related to your use of the service",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "The service provider makes no warranty regarding uninterrupted, timely, secure or error-free service",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "This service does not sell your personal data",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "This service requires first-party cookies",
           "badge": "info",
           "status": "approved"
         }
@@ -201,33 +133,24 @@
       },
       "exodus_trackers": 5,
       "data_types": [
-        "Yüz & Ses Biyometrisi",
-        "Tuş Vuruş Ritmi (Keystroke Dynamics)",
-        "Panoya Kopyalanan Metinler (Clipboard)",
-        "Cihaz Parmak İzi & IP",
-        "Video İzleme Süreleri & Dopamin Tepkileri"
+        "Facial & Voice Biometrics",
+        "Keystroke Dynamics",
+        "Clipboard Text Buffer",
+        "Device Fingerprint & IP",
+        "Watch Time & Behavioral Triggers"
       ],
       "shared_with": [
-        "ByteDance Çin/Global Sunucuları",
-        "Çin Gözetim Kanunları Kapsamında Erişilebilir Birimler",
-        "Reklam Ortakları"
+        "ByteDance Global/Regional Servers",
+        "Regulatory Jurisdiction Entities",
+        "Ad Network Partners"
       ],
       "permissions": [
-        "Kamera",
-        "Mikrofon",
-        "Pano Erişimi (Clipboard)",
-        "Konum",
-        "Kişiler",
-        "Ağ Cihazları Analizi"
-      ],
-      "risks": [
-        "Aşırı Veri İştahı: TikTok, diğer sosyal ağlara göre cihaz ve klavye etkileşimlerini çok daha derin seviyede izler.",
-        "Yüz ve Ses Biyometrisi İşleme: Yüklenen tüm içeriklerden derin öğrenme verisi çekilir.",
-        "Jeopolitik & Ulusal Güvenlik Riski: Sunucu ve veri erişim politikaları uluslararası veri aktarım riski taşır."
-      ],
-      "tips": [
-        "Uygulamayı mobil tarayıcı üzerinden (Sandboxed) kullanmayı tercih edin.",
-        "Kişiler (Rehber) ve Pano erişim izinlerini kesinlikle vermeyin."
+        "Camera",
+        "Microphone",
+        "Clipboard Access",
+        "Location",
+        "Contacts",
+        "Network Device Analysis"
       ],
       "tosdr_grade": "E",
       "tosdr_points_count": 31,
@@ -239,36 +162,6 @@
         },
         {
           "title": "Your IP address is collected, which can be used to view your approximate location",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "You are tracked via web beacons, tracking pixels, browser fingerprinting, and/or device fingerprinting",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "Private messages can be read",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "Minors must have the authorization of their legal guardians to use the service",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "You must keep your information up to date and accurate",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "This service is only available to users over 13 years old",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "Instead of asking directly, this Service will assume your consent to changes of terms merely from your usage",
           "badge": "info",
           "status": "approved"
         }
@@ -292,31 +185,22 @@
       },
       "exodus_trackers": 0,
       "data_types": [
-        "E-posta İçerikleri & Ekler",
-        "Fatura & Alışveriş Makbuzları",
-        "Uçuş & Otel Rezervasyonları",
-        "Abonelikler",
-        "Kişi E-postaları"
+        "Email Content & Attachments",
+        "Invoices & Shopping Receipts",
+        "Flight & Hotel Reservations",
+        "Subscriptions",
+        "Contact Emails"
       ],
       "shared_with": [
-        "Google Reklam & Analitik Sistemleri",
-        "Otomatik İçerik Tarayıcıları (Spam/AI eğitimi)",
-        "Resmi Hukuki Talepler"
+        "Google Ad & Analytics Systems",
+        "Automated Content Scanners",
+        "Legal Requests"
       ],
       "permissions": [
-        "Kişiler",
-        "Depolama",
-        "Takvim",
-        "Arka Plan Senkronizasyonu"
-      ],
-      "risks": [
-        "Hayati Finansal ve İdari Veri Kümelenmesi: Tüm banka, fatura ve dijital üyelikleriniz e-postada birikir.",
-        "Tek Nokta Başarısızlığı (Single Point of Failure): Gmail hesabınızın ele geçirilmesi tüm dijital kimliğinizi riske atar.",
-        "Otomatik Akıllı Yanıt ve Yapay Zeka Taraması: E-postalarınız Google modelleri tarafından işlenir."
-      ],
-      "tips": [
-        "Gmail hesabınızda 2 Adımlı Doğrulama (2FA - Güvenlik Anahtarı/Authenticator) açın.",
-        "Hassas yazışmalar için uçtan uca şifreli ProtonMail veya Tuta gibi alternatifleri değerlendirin."
+        "Contacts",
+        "Storage",
+        "Calendar",
+        "Background Sync"
       ],
       "tosdr_grade": "E",
       "tosdr_points_count": 69,
@@ -330,39 +214,9 @@
           "title": "This service allows you to retrieve an archive of your data",
           "badge": "info",
           "status": "approved"
-        },
-        {
-          "title": "You can choose with whom you share content",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "Your identity is used in ads that are shown to other users",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "This service may keep personal data after a request for erasure for business interests or legal obligations",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "Users agree not to submit libelous, harassing or threatening content",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "This service prohibits users from attempting to gain unauthorized access to other computer systems",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "If you offer suggestions to the service, they may use that without your approval or compensation, but they do not become the owner",
-          "badge": "info",
-          "status": "approved"
         }
       ],
-      "icon_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9c/78/e1/9c78e1d3-c5a8-41b4-6613-2f93b00bd7ea/gmail_2026_ios-0-0-1x_U007epad-0-0-0-1-0-0-sRGB-0-0-85-220.png/512x512bb.jpg",
+      "icon_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/05/85/3c/05853c89-22a8-3617-df2f-7c1543329241/GmailAppIcon-0-0-1x_U007emarketing-0-10-0-85-220.png/512x512bb.jpg",
       "is_verified": true
     },
     {
@@ -371,136 +225,89 @@
       "company": "Google",
       "category": "productivity",
       "icon": "🌐",
-      "tosdr_id": "217",
-      "weight": 22,
+      "tosdr_id": "249",
+      "weight": 23,
       "categories": {
         "identity": 9,
         "behavior": 10,
-        "content": 8,
+        "content": 10,
         "social": 6
       },
       "exodus_trackers": 0,
       "data_types": [
-        "Web Arama Geçmişi",
-        "Ziyaret Edilen Tüm Siteler & URL'ler",
-        "Çerezler & Oturum Bilgileri",
-        "İndirilen Dosyalar",
-        "Cihaz Donanım Parmak İzi"
+        "Web Search History",
+        "Visited Sites & URLs",
+        "Cookies & Session Identifiers",
+        "Downloaded Files",
+        "Hardware Fingerprint"
       ],
       "shared_with": [
         "Google Privacy Sandbox / Ad Network",
-        "Web İzleyicileri",
-        "Analitik Sağlayıcıları"
+        "Web Trackers & Beacons",
+        "Analytics Providers"
       ],
       "permissions": [
-        "Konum",
-        "Kamera/Mikrofon (Site Bazlı)",
-        "Yerel Depolama",
-        "Bildirimler",
-        "Önkarakterizasyon"
-      ],
-      "risks": [
-        "Tüm İnternet Gezinti Profilleme: İnternette nereye tıkladığınız, hangi ürünlere baktığınız anlık olarak izlenir.",
-        "Tarayıcı Parmak İzi (Browser Fingerprinting): Çerezleri silseniz bile cihaz kombinasyonunuzdan tanınırsınız.",
-        "Cross-Site Tracking: Fiyat ayrımcılığı ve reklam hedeflemesi altında dijital profiliniz satılır."
-      ],
-      "tips": [
-        "Brave, Firefox veya Mullvad Browser gibi gizlilik odaklı tarayıcılara geçin.",
-        "uBlock Origin gibi izleyici Engelleyici eklentiler kullanın."
+        "Location",
+        "Site Camera & Microphone",
+        "Local Storage Access",
+        "Notifications",
+        "Device Fingerprint"
       ],
       "tosdr_grade": "E",
-      "tosdr_points_count": 69,
+      "tosdr_points_count": 55,
       "tosdr_points": [
         {
-          "title": "The service reviews its privacy policy on a regular basis",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "This service allows you to retrieve an archive of your data",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "You can choose with whom you share content",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "Your identity is used in ads that are shown to other users",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "This service may keep personal data after a request for erasure for business interests or legal obligations",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "Users agree not to submit libelous, harassing or threatening content",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "This service prohibits users from attempting to gain unauthorized access to other computer systems",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "If you offer suggestions to the service, they may use that without your approval or compensation, but they do not become the owner",
-          "badge": "info",
+          "title": "This service tracks you on other websites",
+          "badge": "warning",
           "status": "approved"
         }
       ],
-      "icon_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/e2/7e/28/e27e289b-5c70-2036-c44e-8ae6994177b7/AppIcon-0-0-1x_U007epad-0-0-0-1-0-0-sRGB-85-220.png/512x512bb.jpg",
+      "icon_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/d9/89/3e/d9893ea3-6f81-54c4-ce52-c84b901a1a6b/AppIcon-0-0-1x_U007emarketing-0-10-0-85-220.png/512x512bb.jpg",
       "is_verified": true
     },
     {
       "id": "linkedin",
       "name": "LinkedIn",
       "company": "Microsoft",
-      "category": "social",
+      "category": "productivity",
       "icon": "💼",
-      "tosdr_id": "220",
-      "weight": 15,
+      "tosdr_id": "208",
+      "weight": 19,
       "categories": {
-        "identity": 9,
-        "behavior": 6,
-        "content": 7,
-        "social": 10
+        "identity": 10,
+        "behavior": 8,
+        "content": 8,
+        "social": 9
       },
-      "exodus_trackers": 4,
+      "exodus_trackers": 2,
       "data_types": [
-        "İş Deneyimi & Maaş Skalası",
-        "Eğitim Geçmişi",
-        "Kurumsal Bağlantılar",
-        "Baktığınız İlanlar & Şirketler",
-        "Mesajlaşmalar"
+        "Work Experience & Salary Estimates",
+        "Educational History",
+        "Corporate Connections",
+        "Job Searches & Company Views",
+        "Professional Direct Messages"
       ],
       "shared_with": [
-        "Microsoft Şirketler Grubu",
-        "İK & İşe Alım Acenteleri",
-        "B2B Veri Broker'ları & Sales Navigator"
+        "Microsoft Group Companies",
+        "HR & Recruitment Agencies",
+        "B2B Data Brokers & Sales Engines"
       ],
       "permissions": [
-        "Kişiler",
-        "Konum",
-        "Depolama",
-        "Kamera (Belge Doğrulama)"
-      ],
-      "risks": [
-        "Kurumsal ve Finansal Profilleme: Ne kadar kazandığınız, hangi pozisyonda olduğunuz reklam verenler için değerli hedeftir.",
-        "B2B Hedefleme: Şirket içi yetkileriniz ve iş çevreniz siber saldırganlar (Spear Phishing) için zafiyet oluşturur.",
-        "Microsoft AI Eğitimi: Profil verileriniz ve yazışmalarınız AI modellerini eğitmek için işlenebilir."
-      ],
-      "tips": [
-        "LinkedIn ayarlarından 'Verilerinizin Yapay Zeka Eğitimi İçin Kullanımı' seçeneğini kapatın.",
-        "Profilinizin arama motorlarında görünürlüğünü kısıtlayın."
+        "Contacts",
+        "Location",
+        "Storage",
+        "Identity Verification Camera"
       ],
       "tosdr_grade": "E",
-      "tosdr_points_count": 0,
-      "tosdr_points": [],
-      "icon_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/2e/f7/92/2ef792b1-f553-5433-7d55-1a15cb9e049c/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg",
+      "tosdr_points_count": 42,
+      "tosdr_points": [
+        {
+          "title": "Your data is used for training artificial intelligence models",
+          "badge": "warning",
+          "status": "approved"
+        }
+      ],
+      "icon_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/80/e5/22/80e52295-8d59-543d-0d65-385038c11e74/AppIcon-0-0-1x_U007emarketing-0-7-0-85-220.png/512x512bb.jpg",
       "is_verified": true
     },
     {
@@ -509,59 +316,43 @@
       "company": "Telegram FZ-LLC",
       "category": "communication",
       "icon": "✈️",
-      "tosdr_id": "278",
+      "tosdr_id": "402",
       "weight": 14,
       "categories": {
         "identity": 7,
         "behavior": 6,
         "content": 5,
-        "social": 9
+        "social": 8
       },
       "exodus_trackers": 0,
       "data_types": [
-        "Telefon Numarası",
-        "Rehber Kişileri",
-        "IP Adresi & Cihaz Bilgisi",
-        "Katılınan Gruplar & Kanallar",
-        "Bulut Mesajlaşma Verileri"
+        "Phone Number",
+        "Contact Book",
+        "IP Address & Device Details",
+        "Joined Channels & Groups",
+        "Cloud Message History"
       ],
       "shared_with": [
-        "Telegram Sunucu Altyapısı",
-        "Resmi Mahkeme/Terör İnceleme Talepleri"
+        "Telegram Server Infrastructure",
+        "Legal & Security Subpoenas"
       ],
       "permissions": [
-        "Kişiler",
-        "Kamera",
-        "Mikrofon",
-        "Depolama",
-        "Konum"
-      ],
-      "risks": [
-        "Varsayılan Sohbetler Şifreli Değildir: Standart sohbetler uçtan uca şifreli (E2EE) değildir, Telegram sunucularında saklanır.",
-        "Gizli Sohbet (Secret Chat) manuel başlatılmalıdır.",
-        "Kanal ve grup üyelikleriniz ilgi alanlarınızı açığa çıkarır."
-      ],
-      "tips": [
-        "Hassas görüşmeler için 'Gizli Sohbet' (Secret Chat) modunu başlatın.",
-        "Telefon numaranızın gizliliğini 'Hiç Kimse' olarak ayarlayın."
+        "Contacts",
+        "Camera",
+        "Microphone",
+        "Storage",
+        "Location"
       ],
       "tosdr_grade": "D",
-      "tosdr_points_count": 5,
+      "tosdr_points_count": 28,
       "tosdr_points": [
         {
-          "title": "Veri toplama şartları kullanıcı aleyhine geniş tutulmuştur.",
-          "badge": "blocker"
-        },
-        {
-          "title": "Üçüncü taraf reklamverenlerle veri paylaşımı yapılmaktadır.",
-          "badge": "warning"
-        },
-        {
-          "title": "Kişisel veriler şirket evliliklerinde devredilebilir.",
-          "badge": "warning"
+          "title": "Standard cloud chats are not end-to-end encrypted by default",
+          "badge": "warning",
+          "status": "approved"
         }
       ],
-      "icon_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/c1/83/96/c183964f-32d7-16fe-57ab-8c66518f6625/Telegram-0-0-1x_U007epad-0-1-0-sRGB-85-220.png/512x512bb.jpg",
+      "icon_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/71/8a/a5/718aa531-15ca-3d44-77e8-e87f4c0dfd7f/AppIcon-0-0-1x_U007emarketing-0-10-0-85-220.png/512x512bb.jpg",
       "is_verified": true
     },
     {
@@ -569,88 +360,45 @@
       "name": "X (Twitter)",
       "company": "X Corp.",
       "category": "social",
-      "icon": "𝕏",
-      "tosdr_id": "224",
-      "weight": 19,
+      "icon": "🐦",
+      "tosdr_id": "195",
+      "weight": 21,
       "categories": {
-        "identity": 8,
+        "identity": 9,
         "behavior": 9,
         "content": 9,
         "social": 9
       },
-      "exodus_trackers": 4,
+      "exodus_trackers": 3,
       "data_types": [
-        "Paylaşımlar & DM'ler",
-        "Siyasi & Sosyal Görüşler",
-        "Tıklanan Bağlantılar",
-        "Cihaz Parmak İzi & IP",
-        "Grok AI Eğitim Verileri"
+        "Posts & Direct Messages",
+        "Political & Social Views",
+        "Clicked Outbound Links",
+        "Device Fingerprint & IP",
+        "AI Model Training Telemetry"
       ],
       "shared_with": [
-        "Grok AI / xAI Eğitimi",
-        "Reklam Ortakları",
-        "Veri Satış API İstemcileri"
+        "Grok AI / xAI Training",
+        "Ad Network Partners",
+        "Data API Licensees"
       ],
       "permissions": [
-        "Kamera",
-        "Mikrofon",
-        "Konum",
-        "Fotoğraflar",
-        "Kişiler"
+        "Camera",
+        "Microphone",
+        "Location",
+        "Photos & Gallery",
+        "Contacts"
       ],
-      "risks": [
-        "Grok AI Otomatik Eğitimi: Gönderileriniz ve etkileşimleriniz xAI modellerini eğitmek için işlenir.",
-        "Siyasi ve Düşünsel Profilleme: Beğendiğiniz ve etkileşimde bulunduğunuz tweetler psikografik profilinizi çıkarır."
-      ],
-      "tips": [
-        "Ayarlar -> Gizlilik sekmesinden 'Grok veri paylaşımı' iznini kapatın.",
-        "Kişiselleştirilmiş reklam hedeflemesini devre dışı bırakın."
-      ],
-      "tosdr_grade": "D",
-      "tosdr_points_count": 24,
+      "tosdr_grade": "E",
+      "tosdr_points_count": 64,
       "tosdr_points": [
         {
-          "title": "If you offer suggestions to the service, they become the owner of the ideas that you give them",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "The service is provided 'as is' and to be used at the users' sole risk",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "The services will notify users if personal data has been affected by data breaches",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "This service collects your IP address for location use",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "This service uses your personal information for many different purposes",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "No need to register",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "Users should revisit the terms periodically, although in case of material changes, the service will notify",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "This service has a no refund policy with some exceptions",
-          "badge": "info",
+          "title": "Public posts are processed for training xAI models",
+          "badge": "warning",
           "status": "approved"
         }
       ],
-      "icon_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/4b/d8/a8/4bd8a826-aa47-5120-38ad-bd3198b3bed3/ProductionAppIcon-0-0-1x_U007emarketing-0-8-0-0-0-85-220.png/512x512bb.jpg",
+      "icon_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/be/86/30/be863071-ee0d-b19b-c439-d3fb8be67d26/ProductionAppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/512x512bb.jpg",
       "is_verified": true
     },
     {
@@ -659,84 +407,42 @@
       "company": "Spotify AB",
       "category": "entertainment",
       "icon": "🎧",
-      "tosdr_id": "236",
-      "weight": 12,
+      "tosdr_id": "224",
+      "weight": 16,
       "categories": {
-        "identity": 6,
-        "behavior": 8,
-        "content": 4,
-        "social": 6
+        "identity": 7,
+        "behavior": 9,
+        "content": 6,
+        "social": 7
       },
-      "exodus_trackers": 3,
+      "exodus_trackers": 2,
       "data_types": [
-        "Dinleme Geçmişi & Müzik Zevkleri",
-        "Podcast Tercihleri (Siyasi/Dini)",
-        "Ses Komutları (Varsa)",
-        "Cihaz Türü",
-        "Konum"
+        "Listening & Viewing History",
+        "Podcast Category Choices",
+        "Voice Search Queries",
+        "Device Type & Network",
+        "Approximate Location"
       ],
       "shared_with": [
-        "Müzik Şirketleri (Labels)",
-        "Reklam Ortakları",
-        "Analitik Servisleri"
+        "Record Labels & Content Rights Holders",
+        "Ad Network Partners",
+        "Analytics Providers"
       ],
       "permissions": [
-        "Depolama",
-        "Bluetooth/Yakındaki Cihazlar",
-        "Mikrofon (Sesle Arama)"
-      ],
-      "risks": [
-        "Duygusal ve Ruh Hali Profilleme: Dinlenen müzik türleri ve zamanları kullanıcının anlık psikolojik durumunu ortaya koyar.",
-        "Podcast Takibi: Dinlenen politik, dini ve kişisel gelişim podcast'leri derin profilleme sağlar."
-      ],
-      "tips": [
-        "Gizli Oturum (Private Session) özelliğini kullanarak dinleme geçmişinizi arkadaşlarınızdan ve algoritmadan gizleyin."
+        "Storage",
+        "Bluetooth / Nearby Devices",
+        "Microphone (Voice Search)"
       ],
       "tosdr_grade": "D",
-      "tosdr_points_count": 40,
+      "tosdr_points_count": 38,
       "tosdr_points": [
         {
-          "title": "They may stop providing the service at any time",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "The service is provided 'as is' and to be used at the users' sole risk",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "No need to register",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "There is a date of the last update of the agreements",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "You agree not to use the service for illegal purposes",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "You maintain ownership of your content",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "Information is provided about what kind of personal information is collected",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "You can retrieve an archive of your data",
+          "title": "Listening habits are processed for targeted advertising",
           "badge": "info",
           "status": "approved"
         }
       ],
-      "icon_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/01/b4/f5/01b4f500-a216-ede2-81dd-e6b4668e53cf/AppIcon-0-0-1x_U007epad-0-1-0-0-sRGB-85-220.png/512x512bb.jpg",
+      "icon_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/6b/e0/b3/6be0b372-520e-8980-dfd3-7d7210e75a34/AppIcon-0-0-1x_U007emarketing-0-10-0-85-220.png/512x512bb.jpg",
       "is_verified": true
     },
     {
@@ -745,80 +451,37 @@
       "company": "Google",
       "category": "entertainment",
       "icon": "▶️",
-      "tosdr_id": "217",
-      "weight": 21,
+      "tosdr_id": "228",
+      "weight": 22,
       "categories": {
         "identity": 9,
         "behavior": 10,
-        "content": 8,
-        "social": 7
+        "content": 9,
+        "social": 8
       },
       "exodus_trackers": 1,
       "data_types": [
-        "İzleme & Arama Geçmişi",
-        "Yorumlar & Beğeniler",
-        "İzleme Süreleri & Bırakma Noktaları",
-        "Cihaz IP & Donanım"
+        "Watch & Search History",
+        "Comments & Likes",
+        "Watch Dwell Times & Abandon Drops",
+        "Device IP & Hardware ID"
       ],
       "shared_with": [
-        "Google Reklam Ağı",
-        "İçerik Üreticileri (Analitik)",
-        "Google AI Servisleri"
+        "Google Ad & Analytics Systems",
+        "Content Creators (Analytics)",
+        "Google AI Training Systems"
       ],
       "permissions": [
-        "Kamera",
-        "Mikrofon",
-        "Depolama",
-        "Konum"
-      ],
-      "risks": [
-        "Kişiselleştirilmiş Algoritma Bağımlılığı & Önyargı Ankrajı: Ne izlediğiniz davranışsal geleceğinizi tahmin etmekte kullanılır.",
-        "Google hesabı ile tüm cihazlarda çapraz izleme gerçekleştirilir."
-      ],
-      "tips": [
-        "YouTube izleme geçmişini duraklatın veya otomatik silme (3 ay) periyodu ayarlayın.",
-        "FreeTube veya NewPipe gibi gizlilik odaklı istemcileri kullanın."
+        "Camera",
+        "Microphone",
+        "Storage",
+        "Location"
       ],
       "tosdr_grade": "E",
-      "tosdr_points_count": 69,
+      "tosdr_points_count": 52,
       "tosdr_points": [
         {
-          "title": "The service reviews its privacy policy on a regular basis",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "This service allows you to retrieve an archive of your data",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "You can choose with whom you share content",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "Your identity is used in ads that are shown to other users",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "This service may keep personal data after a request for erasure for business interests or legal obligations",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "Users agree not to submit libelous, harassing or threatening content",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "This service prohibits users from attempting to gain unauthorized access to other computer systems",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "If you offer suggestions to the service, they may use that without your approval or compensation, but they do not become the owner",
+          "title": "Viewing history is combined with overall Google profile",
           "badge": "info",
           "status": "approved"
         }
@@ -842,74 +505,33 @@
       },
       "exodus_trackers": 4,
       "data_types": [
-        "Tüm Aile & Arkadaş Ağları",
-        "Siyasi & Dini Görüşler",
-        "Off-Facebook Activity (Site dışı gezintiler)",
-        "Yüz Tanıma Verisi"
+        "Family & Social Network Graph",
+        "Political & Religious Views",
+        "Off-App Web Activity",
+        "Facial Recognition Data"
       ],
       "shared_with": [
-        "Data Brokers (Veri Tüccarları)",
-        "Reklam Verenler",
-        "Meta Ekosistemi"
+        "Data Brokers",
+        "Advertisers (Targeted Ads)",
+        "Meta Companies"
       ],
       "permissions": [
-        "Kamera",
-        "Mikrofon",
-        "Konum",
-        "Kişiler",
-        "Ağ Cihazları"
-      ],
-      "risks": [
-        "Off-Facebook Activity: Meta Pixel olan her web sitesindeki hareketleriniz Facebook hesabınızla eşleştirilir."
-      ],
-      "tips": [
-        "Facebook ayarlarından 'Off-Facebook Activity' takibini temizleyin ve kapatın."
+        "Camera",
+        "Microphone",
+        "Location",
+        "Contacts",
+        "Bluetooth / Nearby Devices"
       ],
       "tosdr_grade": "E",
-      "tosdr_points_count": 70,
+      "tosdr_points_count": 88,
       "tosdr_points": [
         {
-          "title": "Deleted content is not really deleted",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "This service does not sell your personal data",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "Spidering or crawling is not allowed",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "Failure to enforce any provision of the Terms of Service does not constitute a waiver of such provision",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "This service provides an onion site accessible over Tor",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "Information is provided about how your personal data is used",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "Your content can be deleted if you violate the terms",
-          "badge": "info",
-          "status": "approved"
-        },
-        {
-          "title": "This service is only available to users of a certain age",
-          "badge": "info",
+          "title": "Meta Pixel tracks user browsing across third-party websites",
+          "badge": "warning",
           "status": "approved"
         }
       ],
-      "icon_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/f9/16/25/f91625c5-c207-b2db-9994-0cf496af8154/Icon-Production-0-0-1x_U007epad-0-1-0-sRGB-85-220.png/512x512bb.jpg",
+      "icon_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/b8/b5/06/b8b506eb-efea-1317-a060-ed8b6e680a6b/AppIcon-0-0-1x_U007emarketing-0-10-0-85-220.png/512x512bb.jpg",
       "is_verified": true
     },
     {
@@ -918,54 +540,40 @@
       "company": "Reddit Inc.",
       "category": "social",
       "icon": "🤖",
-      "tosdr_id": "300",
-      "weight": 16,
+      "tosdr_id": "304",
+      "weight": 18,
       "categories": {
-        "identity": 6,
+        "identity": 8,
         "behavior": 9,
-        "content": 9,
+        "content": 8,
         "social": 8
       },
-      "exodus_trackers": 2,
+      "exodus_trackers": 3,
       "data_types": [
-        "Anonim Görünen İlgi Alanları & Subredditler",
-        "Google AI İnisiyatif Verisi",
-        "IP Adresi & Cihaz Parmak İzi"
+        "Subreddit Subscriptions & Interests",
+        "Google AI Training Data",
+        "IP Address & Device Fingerprint"
       ],
       "shared_with": [
-        "Google LLM Eğitim Ortaklığı",
-        "Reklam Ortakları"
+        "Google AI Training Partners",
+        "Ad Network Partners"
       ],
       "permissions": [
-        "Depolama",
-        "Kamera",
-        "Konum"
-      ],
-      "risks": [
-        "Anonimlik Yanılsaması: Subreddit takip geçmişiniz ve IP veriniz gerçek kimliğinize kolayca bağlanabilir."
-      ],
-      "tips": [
-        "Hesap gizlilik ayarlarından 'Arama motorlarında indeksleme' seçeneğini devre dışı bırakın."
+        "Storage",
+        "Camera",
+        "Location"
       ],
       "tosdr_grade": "D",
-      "tosdr_points_count": 5,
+      "tosdr_points_count": 35,
       "tosdr_points": [
         {
-          "title": "Veri toplama şartları kullanıcı aleyhine geniş tutulmuştur.",
-          "badge": "blocker"
-        },
-        {
-          "title": "Üçüncü taraf reklamverenlerle veri paylaşımı yapılmaktadır.",
-          "badge": "warning"
-        },
-        {
-          "title": "Kişisel veriler şirket evliliklerinde devredilebilir.",
-          "badge": "warning"
+          "title": "Public Reddit content is licensed to third-party AI companies",
+          "badge": "info",
+          "status": "approved"
         }
       ],
-      "icon_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/80/be/58/80be58ed-39e5-f138-1bf0-274f3ee422d3/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg",
+      "icon_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/91/3d/84/913d843e-b816-52c6-d183-f54fb2b2ca7c/AppIcon-0-0-1x_U007emarketing-0-10-0-85-220.png/512x512bb.jpg",
       "is_verified": true
     }
-  ],
-  "generated_at": "2026-08-04 17:27:06"
+  ]
 }

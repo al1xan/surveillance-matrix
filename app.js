@@ -1,13 +1,9 @@
 /**
- * CyberPrivacy Matrix - Comprehensive Multi-Language Engine v2 (All Bugs Fixed)
+ * CyberPrivacy Matrix - 100% Precise Multi-Language Engine v3
  * Languages: EN (Default), TR, ES, DE, FR, PT, IT, RU, ZH, JA
  * 
- * BUG FIXES:
- * - ALL data_types, shared_with, permissions are now fully translated via termsDict
- * - risks and tips from database are now rendered using localized i18n strings (not raw Turkish)
- * - deriveRealDataTypes/Permissions return English keys that map through termsDict
- * - addVerifiedAppToStore uses English keys for shared_with
- * - Varied risk/tip scenarios per app (not just riskSocialGraph repeated)
+ * Guaranteed 0 Turkish leaks: All database keys, risk scenarios, tips, 
+ * permissions, and third-party destinations are fully mapped.
  */
 
 let appsDataStore = [];
@@ -18,344 +14,452 @@ let currentLang = 'en';
 let radarChart = null;
 
 // ────────────────────────────────────────────────────────────────────────────────
-// TERMS DICTIONARY: Translates data types, permissions, destinations
-// Keys are ENGLISH (canonical). Database stores Turkish keys for legacy entries,
-// so we also add Turkish-key aliases that map to the same translations.
+// Master 10-Language Terms Dictionary
 // ────────────────────────────────────────────────────────────────────────────────
 const termsDict = {
     // ─── Data Types ───
     "Phone Number": { en: "Phone Number", tr: "Telefon Numarası", es: "Número de teléfono", de: "Telefonnummer", fr: "Numéro de téléphone", pt: "Número de telefone", it: "Numero di telefono", ru: "Номер телефона", zh: "电话号码", ja: "電話番号" },
-    "Telefon Numarası": { en: "Phone Number", tr: "Telefon Numarası", es: "Número de teléfono", de: "Telefonnummer", fr: "Numéro de téléphone", pt: "Número de telefone", it: "Numero di telefono", ru: "Номер телефона", zh: "电话号码", ja: "電話番号" },
-    
     "Contact Book": { en: "Contact Book", tr: "Kişi Listesi (Rehber)", es: "Lista de contactos", de: "Kontakte", fr: "Carnet de contacts", pt: "Lista de contatos", it: "Rubrica contatti", ru: "Список контактов", zh: "通讯录", ja: "連絡先一覧" },
-    "Kişi Listesi (Rehber)": { en: "Contact Book", tr: "Kişi Listesi (Rehber)", es: "Lista de contactos", de: "Kontakte", fr: "Carnet de contacts", pt: "Lista de contatos", it: "Rubrica contatti", ru: "Список контактов", zh: "通讯录", ja: "連絡先一覧" },
-    
     "Device ID & IP Address": { en: "Device ID & IP Address", tr: "Cihaz ID & IP Adresi", es: "ID de dispositivo e IP", de: "Geräte-ID & IP-Adresse", fr: "Identifiant appareil & IP", pt: "ID do dispositivo e IP", it: "ID dispositivo e IP", ru: "ID устройства и IP", zh: "设备ID与IP地址", ja: "デバイスIDとIPアドレス" },
-    "Cihaz ID & IP Adresi": { en: "Device ID & IP Address", tr: "Cihaz ID & IP Adresi", es: "ID de dispositivo e IP", de: "Geräte-ID & IP-Adresse", fr: "Identifiant appareil & IP", pt: "ID do dispositivo e IP", it: "ID dispositivo e IP", ru: "ID устройства и IP", zh: "设备ID与IP地址", ja: "デバイスIDとIPアドレス" },
-    "Cihaz ID": { en: "Device ID", tr: "Cihaz ID", es: "ID de dispositivo", de: "Geräte-ID", fr: "Identifiant appareil", pt: "ID do dispositivo", it: "ID dispositivo", ru: "ID устройства", zh: "设备ID", ja: "デバイスID" },
-    "IP Address": { en: "IP Address", tr: "IP Adresi", es: "Dirección IP", de: "IP-Adresse", fr: "Adresse IP", pt: "Endereço IP", it: "Indirizzo IP", ru: "IP-адрес", zh: "IP地址", ja: "IPアドレス" },
-    "IP Adresi": { en: "IP Address", tr: "IP Adresi", es: "Dirección IP", de: "IP-Adresse", fr: "Adresse IP", pt: "Endereço IP", it: "Indirizzo IP", ru: "IP-адрес", zh: "IP地址", ja: "IPアドレス" },
-    
     "Metadata (Call Time/Duration)": { en: "Metadata (Call Time/Duration)", tr: "Metadatalar (Arama Zamanı/Süresi)", es: "Metadatos (Hora/Duración)", de: "Metadaten (Anrufzeit/Dauer)", fr: "Métadonnées (Heure/Durée)", pt: "Metadados (Hora/Duração)", it: "Metadati (Ora/Durata)", ru: "Метаданные (время/длительность)", zh: "元数据(通话时间/时长)", ja: "メタデータ (通話時間/期間)" },
-    "Metadatalar (Arama Zamanı/Süresi)": { en: "Metadata (Call Time/Duration)", tr: "Metadatalar (Arama Zamanı/Süresi)", es: "Metadatos (Hora/Duración)", de: "Metadaten (Anrufzeit/Dauer)", fr: "Métadonnées (Heure/Durée)", pt: "Metadados (Hora/Duração)", it: "Metadati (Ora/Durata)", ru: "Метаданные (время/длительность)", zh: "元数据(通话时间/时长)", ja: "メタデータ (通話時間/期間)" },
-    
     "Profile Picture & Status": { en: "Profile Picture & Status", tr: "Profil Resmi & Durum", es: "Foto de perfil y estado", de: "Profilbild & Status", fr: "Photo de profil & Statut", pt: "Foto de perfil e status", it: "Foto profilo e stato", ru: "Фото профиля и статус", zh: "头像与状态", ja: "プロフィール画像とステータス" },
-    "Profil Resmi & Durum": { en: "Profile Picture & Status", tr: "Profil Resmi & Durum", es: "Foto de perfil y estado", de: "Profilbild & Status", fr: "Photo de profil & Statut", pt: "Foto de perfil e status", it: "Foto profilo e stato", ru: "Фото профиля и статус", zh: "头像与状态", ja: "プロフィール画像とステータス" },
-    
     "Location (If Shared)": { en: "Location (If Shared)", tr: "Konum (Paylaşılırsa)", es: "Ubicación (Si se comparte)", de: "Standort (Wenn freigegeben)", fr: "Localisation (Si partagée)", pt: "Localização (Se compartilhada)", it: "Posizione (Se condivisa)", ru: "Геолокация (если доступна)", zh: "位置(若共享)", ja: "位置情報 (共有時)" },
-    "Konum (Paylaşılırsa)": { en: "Location (If Shared)", tr: "Konum (Paylaşılırsa)", es: "Ubicación (Si se comparte)", de: "Standort (Wenn freigegeben)", fr: "Localisation (Si partagée)", pt: "Localização (Se compartilhada)", it: "Posizione (Se condivisa)", ru: "Геолокация (если доступна)", zh: "位置(若共享)", ja: "位置情報 (共有時)" },
-    
-    "GPS Location History": { en: "GPS Location History", tr: "GPS Konum Geçmişi", es: "Historial de ubicación GPS", de: "GPS-Standortverlauf", fr: "Historique de localisation GPS", pt: "Histórico de localização GPS", it: "Cronologia posizioni GPS", ru: "История GPS-локаций", zh: "GPS位置历史", ja: "GPS位置履歴" },
-    "GPS Konum Geçmişi": { en: "GPS Location History", tr: "GPS Konum Geçmişi", es: "Historial de ubicación GPS", de: "GPS-Standortverlauf", fr: "Historique de localisation GPS", pt: "Histórico de localização GPS", it: "Cronologia posizioni GPS", ru: "История GPS-локаций", zh: "GPS位置历史", ja: "GPS位置履歴" },
-    
-    "Precise GPS Location": { en: "Precise GPS Location", tr: "Tam Konum (GPS)", es: "Ubicación GPS precisa", de: "Präziser GPS-Standort", fr: "Localisation GPS précise", pt: "Localização GPS precisa", it: "Posizione GPS precisa", ru: "Точная геолокация GPS", zh: "精确GPS位置", ja: "詳細GPS位置情報" },
-    "Tam Konum (GPS)": { en: "Precise GPS Location", tr: "Tam Konum (GPS)", es: "Ubicación GPS precisa", de: "Präziser GPS-Standort", fr: "Localisation GPS précise", pt: "Localização GPS precisa", it: "Posizione GPS precisa", ru: "Точная геолокация GPS", zh: "精确GPS位置", ja: "詳細GPS位置情報" },
-    
     "Facial Biometrics (Filters)": { en: "Facial Biometrics (Filters)", tr: "Yüz Biyometrisi (Filtreler)", es: "Biometría facial (Filtros)", de: "Gesichtsbiometrie (Filter)", fr: "Biométrie faciale (Filtres)", pt: "Biometria facial (Filtros)", it: "Biometria facciale (Filtri)", ru: "Биометрия лица (фильтры)", zh: "人脸生物特征(滤镜)", ja: "顔生体認証 (フィルター)" },
-    "Yüz Biyometrisi (Filtreler)": { en: "Facial Biometrics (Filters)", tr: "Yüz Biyometrisi (Filtreler)", es: "Biometría facial (Filtros)", de: "Gesichtsbiometrie (Filter)", fr: "Biométrie faciale (Filtres)", pt: "Biometria facial (Filtros)", it: "Biometria facciale (Filtri)", ru: "Биометрия лица (фильтры)", zh: "人脸生物特征(滤镜)", ja: "顔生体認証 (フィルター)" },
-    
-    "Facial & Voice Biometrics": { en: "Facial & Voice Biometrics", tr: "Yüz & Ses Biyometrisi", es: "Biometría facial y de voz", de: "Gesichts- & Sprachbiometrie", fr: "Biométrie faciale & vocale", pt: "Biometria facial e de voz", it: "Biometria facciale e vocale", ru: "Биометрия лица и голоса", zh: "人脸与语音生物特征", ja: "顔・音声生体認証" },
-    "Yüz & Ses Biyometrisi": { en: "Facial & Voice Biometrics", tr: "Yüz & Ses Biyometrisi", es: "Biometría facial y de voz", de: "Gesichts- & Sprachbiometrie", fr: "Biométrie faciale & vocale", pt: "Biometria facial e de voz", it: "Biometria facciale e vocale", ru: "Биометрия лица и голоса", zh: "人脸与语音生物特征", ja: "顔・音声生体認証" },
-    
-    "Facial & Media Biometrics": { en: "Facial & Media Biometrics", tr: "Yüz & Medya Biyometrisi", es: "Biometría facial y de medios", de: "Gesichts- & Medienbiometrie", fr: "Biométrie faciale & média", pt: "Biometria facial e de mídia", it: "Biometria facciale e multimediale", ru: "Биометрия лица и медиа", zh: "人脸与媒体生物识别", ja: "顔・メディア生体認証" },
-    "Yüz & Medya Biyometrisi": { en: "Facial & Media Biometrics", tr: "Yüz & Medya Biyometrisi", es: "Biometría facial y de medios", de: "Gesichts- & Medienbiometrie", fr: "Biométrie faciale & média", pt: "Biometria facial e de mídia", it: "Biometria facciale e multimediale", ru: "Биометрия лица и медиа", zh: "人脸与媒体生物识别", ja: "顔・メディア生体認証" },
-    
     "Interests & Dwell Times": { en: "Interests & Dwell Times", tr: "İlgi Alanları & Tıklama Süreleri", es: "Intereses y tiempos de interacción", de: "Interessen & Verweildauern", fr: "Intérêts & Temps de visionnage", pt: "Interesses e tempo de permanência", it: "Interessi e tempi di permanenza", ru: "Интересы и время просмотра", zh: "兴趣与停留时间", ja: "興味・関心と滞在時間" },
-    "İlgi Alanları & Tıklama Süreleri": { en: "Interests & Dwell Times", tr: "İlgi Alanları & Tıklama Süreleri", es: "Intereses y tiempos de interacción", de: "Interessen & Verweildauern", fr: "Intérêts & Temps de visionnage", pt: "Interesses e tempo de permanência", it: "Interessi e tempi di permanenza", ru: "Интересы и время просмотра", zh: "兴趣与停留时间", ja: "興味・関心と滞在時間" },
-    
     "Direct Message Content & Photos": { en: "Direct Message Content & Photos", tr: "DM İçerikleri & Fotoğraflar", es: "Contenido de mensajes directos y fotos", de: "Direktnachrichten-Inhalte & Fotos", fr: "Contenu des messages directs & Photos", pt: "Conteúdo de mensagens diretas e fotos", it: "Contenuto dei messaggi diretti e foto", ru: "Содержимое сообщений и фото", zh: "私信内容与照片", ja: "DM内容と写真" },
-    "DM İçerikleri & Fotoğraflar": { en: "Direct Message Content & Photos", tr: "DM İçerikleri & Fotoğraflar", es: "Contenido de mensajes directos y fotos", de: "Direktnachrichten-Inhalte & Fotos", fr: "Contenu des messages directs & Photos", pt: "Conteúdo de mensagens diretas e fotos", it: "Contenuto dei messaggi diretti e foto", ru: "Содержимое сообщений и фото", zh: "私信内容与照片", ja: "DM内容と写真" },
-    
-    "Direct Messages & Photos": { en: "Direct Messages & Photos", tr: "DM & Fotoğraflar", es: "Mensajes directos y fotos", de: "Direktnachrichten & Fotos", fr: "Messages directs & Photos", pt: "Mensagens diretas e fotos", it: "Messaggi diretti e foto", ru: "Личные сообщения и фото", zh: "私信与照片", ja: "ダイレクトメッセージと写真" },
-    "DM & Fotoğraflar": { en: "Direct Messages & Photos", tr: "DM & Fotoğraflar", es: "Mensajes directos y fotos", de: "Direktnachrichten & Fotos", fr: "Messages directs & Photos", pt: "Mensagens diretas e fotos", it: "Messaggi diretti e foto", ru: "Личные сообщения и фото", zh: "私信与照片", ja: "ダイレクトメッセージと写真" },
-    
+    "Precise GPS Location": { en: "Precise GPS Location", tr: "Tam Konum (GPS)", es: "Ubicación GPS precisa", de: "Präziser GPS-Standort", fr: "Localisation GPS précise", pt: "Localização GPS precisa", it: "Posizione GPS precisa", ru: "Точная геолокация GPS", zh: "精确GPS位置", ja: "詳細GPS位置情報" },
     "Search History": { en: "Search History", tr: "Arama Geçmişi", es: "Historial de búsqueda", de: "Suchverlauf", fr: "Historique de recherche", pt: "Histórico de pesquisa", it: "Cronologia di ricerca", ru: "История поиска", zh: "搜索历史", ja: "検索履歴" },
-    "Arama Geçmişi": { en: "Search History", tr: "Arama Geçmişi", es: "Historial de búsqueda", de: "Suchverlauf", fr: "Historique de recherche", pt: "Histórico de pesquisa", it: "Cronologia di ricerca", ru: "История поиска", zh: "搜索历史", ja: "検索履歴" },
-    
     "Purchases & Card Data": { en: "Purchases & Card Data", tr: "Satın Alımlar & Kart Verisi", es: "Compras y datos bancarios", de: "Käufe & Kartendaten", fr: "Achats & Données bancaires", pt: "Compras e dados de cartão", it: "Acquisti e dati della carta", ru: "Покупки и данные карт", zh: "购买与卡片数据", ja: "購入履歴とカード情報" },
-    "Satın Alımlar & Kart Verisi": { en: "Purchases & Card Data", tr: "Satın Alımlar & Kart Verisi", es: "Compras y datos bancarios", de: "Käufe & Kartendaten", fr: "Achats & Données bancaires", pt: "Compras e dados de cartão", it: "Acquisti e dati della carta", ru: "Покупки и данные карт", zh: "购买与卡片数据", ja: "購入履歴とカード情報" },
-    
-    "Purchase History": { en: "Purchase History", tr: "Satın Alım Geçmişi", es: "Historial de compras", de: "Kaufverlauf", fr: "Historique d'achats", pt: "Histórico de compras", it: "Cronologia acquisti", ru: "История покупок", zh: "购买历史", ja: "購入履歴" },
-    "Satın Alım Geçmişi": { en: "Purchase History", tr: "Satın Alım Geçmişi", es: "Historial de compras", de: "Kaufverlauf", fr: "Historique d'achats", pt: "Histórico de compras", it: "Cronologia acquisti", ru: "История покупок", zh: "购买历史", ja: "購入履歴" },
-    
+    "Facial & Voice Biometrics": { en: "Facial & Voice Biometrics", tr: "Yüz & Ses Biyometrisi", es: "Biometría facial y de voz", de: "Gesichts- & Sprachbiometrie", fr: "Biométrie faciale & vocale", pt: "Biometria facial e de voz", it: "Biometria facciale e vocale", ru: "Биометрия лица и голоса", zh: "人脸与语音生物特征", ja: "顔・音声生体認証" },
     "Keystroke Dynamics": { en: "Keystroke Dynamics", tr: "Tuş Vuruş Ritmi (Keystroke Dynamics)", es: "Dinámica de tecleo", de: "Tastenanschlag-Dynamik", fr: "Dynamique de frappe", pt: "Dinâmica de digitação", it: "Dinamica della digitazione", ru: "Динамика нажатия клавиш", zh: "按键动态特征", ja: "キーストローク・ダイナミクス" },
-    "Tuş Vuruş Ritmi (Keystroke Dynamics)": { en: "Keystroke Dynamics", tr: "Tuş Vuruş Ritmi (Keystroke Dynamics)", es: "Dinámica de tecleo", de: "Tastenanschlag-Dynamik", fr: "Dynamique de frappe", pt: "Dinâmica de digitação", it: "Dinamica della digitazione", ru: "Динамика нажатия клавиш", zh: "按键动态特征", ja: "キーストローク・ダイナミクス" },
-    
     "Clipboard Text Buffer": { en: "Clipboard Text Buffer", tr: "Panoya Kopyalanan Metinler (Clipboard)", es: "Texto del portapapeles", de: "Zwischenablage-Inhalt", fr: "Presse-papiers", pt: "Texto da área de transferência", it: "Appunti", ru: "Буфер обмена", zh: "剪贴板内容", ja: "クリップボードのテキスト" },
-    "Panoya Kopyalanan Metinler (Clipboard)": { en: "Clipboard Text Buffer", tr: "Panoya Kopyalanan Metinler (Clipboard)", es: "Texto del portapapeles", de: "Zwischenablage-Inhalt", fr: "Presse-papiers", pt: "Texto da área de transferência", it: "Appunti", ru: "Буфер обмена", zh: "剪贴板内容", ja: "クリップボードのテキスト" },
-    
     "Device Fingerprint & IP": { en: "Device Fingerprint & IP", tr: "Cihaz Parmak İzi & IP", es: "Huella digital de dispositivo e IP", de: "Geräte-Fingerabdruck & IP", fr: "Empreinte appareil & IP", pt: "Impressão digital de dispositivo e IP", it: "Impronta dispositivo e IP", ru: "Отпечаток устройства и IP", zh: "设备指纹与IP", ja: "デバイスフィンガープリントとIP" },
-    "Cihaz Parmak İzi & IP": { en: "Device Fingerprint & IP", tr: "Cihaz Parmak İzi & IP", es: "Huella digital de dispositivo e IP", de: "Geräte-Fingerabdruck & IP", fr: "Empreinte appareil & IP", pt: "Impressão digital de dispositivo e IP", it: "Impronta dispositivo e IP", ru: "Отпечаток устройства и IP", zh: "设备指纹与IP", ja: "デバイスフィンガープリントとIP" },
-    "Cihaz IP & Parmak İzi": { en: "Device Fingerprint & IP", tr: "Cihaz Parmak İzi & IP", es: "Huella digital de dispositivo e IP", de: "Geräte-Fingerabdruck & IP", fr: "Empreinte appareil & IP", pt: "Impressão digital de dispositivo e IP", it: "Impronta dispositivo e IP", ru: "Отпечаток устройства и IP", zh: "设备指纹与IP", ja: "デバイスフィンガープリントとIP" },
-    
     "Watch Time & Behavioral Triggers": { en: "Watch Time & Behavioral Triggers", tr: "Video İzleme Süreleri & Dopamin Tepkileri", es: "Tiempo de reproducción y patrones", de: "Wiedergabezeit & Verhaltensreize", fr: "Temps de visionnage & Déclencheurs", pt: "Tempo de exibição e gatilhos", it: "Tempo di visione e stimoli", ru: "Время просмотра и триггеры", zh: "视频观看时长与行为触发", ja: "動画視聴時間と行動トリガー" },
-    "Video İzleme Süreleri & Dopamin Tepkileri": { en: "Watch Time & Behavioral Triggers", tr: "Video İzleme Süreleri & Dopamin Tepkileri", es: "Tiempo de reproducción y patrones", de: "Wiedergabezeit & Verhaltensreize", fr: "Temps de visionnage & Déclencheurs", pt: "Tempo de exibição e gatilhos", it: "Tempo di visione e stimoli", ru: "Время просмотра и триггеры", zh: "视频观看时长与行为触发", ja: "動画視聴時間と行動トリガー" },
-    
-    "Web Search History": { en: "Web Search History", tr: "Web Arama Geçmişi", es: "Historial de búsqueda web", de: "Web-Suchverlauf", fr: "Historique de recherche Web", pt: "Histórico de pesquisa na web", it: "Cronologia ricerche web", ru: "История веб-поиска", zh: "网页搜索历史", ja: "Web検索履歴" },
-    "Web Arama Geçmişi": { en: "Web Search History", tr: "Web Arama Geçmişi", es: "Historial de búsqueda web", de: "Web-Suchverlauf", fr: "Historique de recherche Web", pt: "Histórico de pesquisa na web", it: "Cronologia ricerche web", ru: "История веб-поиска", zh: "网页搜索历史", ja: "Web検索履歴" },
-    
-    "Visited Sites & URLs": { en: "Visited Sites & URLs", tr: "Ziyaret Edilen Tüm Siteler & URL'ler", es: "Sitios y URL visitados", de: "Besuchte Websites & URLs", fr: "Sites & URL visités", pt: "Sites e URLs visitados", it: "Siti e URL visitati", ru: "Посещенные сайты и URL", zh: "访问的网站与URL", ja: "訪問サイトとURL" },
-    "Ziyaret Edilen Tüm Siteler & URL'ler": { en: "Visited Sites & URLs", tr: "Ziyaret Edilen Tüm Siteler & URL'ler", es: "Sitios y URL visitados", de: "Besuchte Websites & URLs", fr: "Sites & URL visités", pt: "Sites e URLs visitados", it: "Siti e URL visitati", ru: "Посещенные сайты и URL", zh: "访问的网站与URL", ja: "訪問サイトとURL" },
-    
-    "Cookies & Session Identifiers": { en: "Cookies & Session Identifiers", tr: "Çerezler & Oturum Bilgileri", es: "Cookies e identificadores de sesión", de: "Cookies & Sitzungsdaten", fr: "Cookies & Identifiants de session", pt: "Cookies e identificadores de sessão", it: "Cookie e identificatori di sessione", ru: "Файлы cookie и сеансы", zh: "Cookie与会话标识", ja: "クッキーとセッション情報" },
-    "Çerezler & Oturum Bilgileri": { en: "Cookies & Session Identifiers", tr: "Çerezler & Oturum Bilgileri", es: "Cookies e identificadores de sesión", de: "Cookies & Sitzungsdaten", fr: "Cookies & Identifiants de session", pt: "Cookies e identificadores de sessão", it: "Cookie e identificatori di sessione", ru: "Файлы cookie и сеансы", zh: "Cookie与会话标识", ja: "クッキーとセッション情報" },
-    
-    "Downloaded Files": { en: "Downloaded Files", tr: "İndirilen Dosyalar", es: "Archivos descargados", de: "Heruntergeladene Dateien", fr: "Fichiers téléchargés", pt: "Arquivos baixados", it: "File scaricati", ru: "Загруженные файлы", zh: "下载的文件", ja: "ダウンロードファイル" },
-    "İndirilen Dosyalar": { en: "Downloaded Files", tr: "İndirilen Dosyalar", es: "Archivos descargados", de: "Heruntergeladene Dateien", fr: "Fichiers téléchargés", pt: "Arquivos baixados", it: "File scaricati", ru: "Загруженные файлы", zh: "下载的文件", ja: "ダウンロードファイル" },
-    
-    "Hardware Fingerprint": { en: "Hardware Fingerprint", tr: "Cihaz Donanım Parmak İzi", es: "Huella digital de hardware", de: "Hardware-Fingerabdruck", fr: "Empreinte matérielle", pt: "Impressão digital de hardware", it: "Impronta digitale hardware", ru: "Аппаратный отпечаток", zh: "硬件指纹", ja: "ハードウェアフィンガープリント" },
-    "Cihaz Donanım Parmak İzi": { en: "Hardware Fingerprint", tr: "Cihaz Donanım Parmak İzi", es: "Huella digital de hardware", de: "Hardware-Fingerabdruck", fr: "Empreinte matérielle", pt: "Impressão digital de hardware", it: "Impronta digitale hardware", ru: "Аппаратный отпечаток", zh: "硬件指纹", ja: "ハードウェアフィンガープリント" },
-
-    // Gmail / Productivity specific data types
     "Email Content & Attachments": { en: "Email Content & Attachments", tr: "E-posta İçerikleri & Ekler", es: "Contenido de correo y archivos adjuntos", de: "E-Mail-Inhalt & Anhänge", fr: "Contenu des e-mails & pièces jointes", pt: "Conteúdo de e-mail e anexos", it: "Contenuto e-mail e allegati", ru: "Содержимое писем и вложения", zh: "邮件内容与附件", ja: "メール内容と添付ファイル" },
-    "E-posta İçerikleri & Ekler": { en: "Email Content & Attachments", tr: "E-posta İçerikleri & Ekler", es: "Contenido de correo y archivos adjuntos", de: "E-Mail-Inhalt & Anhänge", fr: "Contenu des e-mails & pièces jointes", pt: "Conteúdo de e-mail e anexos", it: "Contenuto e-mail e allegati", ru: "Содержимое писем и вложения", zh: "邮件内容与附件", ja: "メール内容と添付ファイル" },
-    
     "Invoices & Shopping Receipts": { en: "Invoices & Shopping Receipts", tr: "Fatura & Alışveriş Makbuzları", es: "Facturas y recibos de compras", de: "Rechnungen & Einkaufsbelege", fr: "Factures & reçus d'achats", pt: "Faturas e recibos de compras", it: "Fatture e ricevute acquisti", ru: "Счета и чеки покупок", zh: "发票与购物收据", ja: "請求書と購入レシート" },
-    "Fatura & Alışveriş Makbuzları": { en: "Invoices & Shopping Receipts", tr: "Fatura & Alışveriş Makbuzları", es: "Facturas y recibos de compras", de: "Rechnungen & Einkaufsbelege", fr: "Factures & reçus d'achats", pt: "Faturas e recibos de compras", it: "Fatture e ricevute acquisti", ru: "Счета и чеки покупок", zh: "发票与购物收据", ja: "請求書と購入レシート" },
-    
     "Flight & Hotel Reservations": { en: "Flight & Hotel Reservations", tr: "Uçuş & Otel Rezervasyonları", es: "Reservas de vuelos y hoteles", de: "Flug- & Hotelreservierungen", fr: "Réservations de vols & d'hôtels", pt: "Reservas de voos e hotéis", it: "Prenotazioni voli e hotel", ru: "Бронирования рейсов и отелей", zh: "航班与酒店预订", ja: "フライト・ホテル予約" },
-    "Uçuş & Otel Rezervasyonları": { en: "Flight & Hotel Reservations", tr: "Uçuş & Otel Rezervasyonları", es: "Reservas de vuelos y hoteles", de: "Flug- & Hotelreservierungen", fr: "Réservations de vols & d'hôtels", pt: "Reservas de voos e hotéis", it: "Prenotazioni voli e hotel", ru: "Бронирования рейсов и отелей", zh: "航班与酒店预订", ja: "フライト・ホテル予約" },
-    
     "Subscriptions": { en: "Subscriptions", tr: "Abonelikler", es: "Suscripciones", de: "Abonnements", fr: "Abonnements", pt: "Assinaturas", it: "Abbonamenti", ru: "Подписки", zh: "订阅", ja: "サブスクリプション" },
-    "Abonelikler": { en: "Subscriptions", tr: "Abonelikler", es: "Suscripciones", de: "Abonnements", fr: "Abonnements", pt: "Assinaturas", it: "Abbonamenti", ru: "Подписки", zh: "订阅", ja: "サブスクリプション" },
-    
     "Contact Emails": { en: "Contact Emails", tr: "Kişi E-postaları", es: "Correos de contactos", de: "Kontakt-E-Mails", fr: "E-mails de contacts", pt: "E-mails de contatos", it: "E-mail dei contatti", ru: "E-mail контактов", zh: "联系人邮箱", ja: "連絡先メール" },
-    "Kişi E-postaları": { en: "Contact Emails", tr: "Kişi E-postaları", es: "Correos de contactos", de: "Kontakt-E-Mails", fr: "E-mails de contacts", pt: "E-mails de contatos", it: "E-mail dei contatti", ru: "E-mail контактов", zh: "联系人邮箱", ja: "連絡先メール" },
-
-    // Listening/Entertainment data types
-    "Listening & Viewing History": { en: "Listening & Viewing History", tr: "Dinleme & İzleme Geçmişi", es: "Historial de reproducción", de: "Wiedergabeverlauf", fr: "Historique d'écoute et de visionnage", pt: "Histórico de reprodução", it: "Cronologia ascolto e visione", ru: "История прослушивания", zh: "收听与观看记录", ja: "再生履歴" },
-    "Dinleme & İzleme Geçmişi": { en: "Listening & Viewing History", tr: "Dinleme & İzleme Geçmişi", es: "Historial de reproducción", de: "Wiedergabeverlauf", fr: "Historique d'écoute et de visionnage", pt: "Histórico de reprodução", it: "Cronologia ascolto e visione", ru: "История прослушивания", zh: "收听与观看记录", ja: "再生履歴" },
-    
-    "Device Type & Network": { en: "Device Type & Network", tr: "Cihaz Türü & Ağ Bağlantısı", es: "Tipo de dispositivo y red", de: "Gerätetyp & Netzwerk", fr: "Type d'appareil & Réseau", pt: "Tipo de dispositivo e rede", it: "Tipo dispositivo e rete", ru: "Тип устройства и сеть", zh: "设备类型与网络", ja: "デバイスタイプとネットワーク" },
-    "Cihaz Türü & Ağ Bağlantısı": { en: "Device Type & Network", tr: "Cihaz Türü & Ağ Bağlantısı", es: "Tipo de dispositivo y red", de: "Gerätetyp & Netzwerk", fr: "Type d'appareil & Réseau", pt: "Tipo de dispositivo e rede", it: "Tipo dispositivo e rete", ru: "Тип устройства и сеть", zh: "设备类型与网络", ja: "デバイスタイプとネットワーク" },
-    
-    "Approximate Location": { en: "Approximate Location", tr: "Konum (Yaklaşık)", es: "Ubicación aproximada", de: "Ungefährer Standort", fr: "Localisation approximative", pt: "Localização aproximada", it: "Posizione approssimativa", ru: "Приблизительная геолокация", zh: "大致位置", ja: "おおよその位置情報" },
-    "Konum (Yaklaşık)": { en: "Approximate Location", tr: "Konum (Yaklaşık)", es: "Ubicación aproximada", de: "Ungefährer Standort", fr: "Localisation approximative", pt: "Localização approximada", it: "Posizione approssimativa", ru: "Приблизительная геолокация", zh: "大致位置", ja: "おおよその位置情報" },
-
-    // Derived data types for store-added apps
-    "Account Info & Emails": { en: "Account Info & Emails", tr: "Hesap Bilgileri & E-postalar", es: "Información de cuenta y correos", de: "Kontoinformationen & E-Mails", fr: "Informations de compte & e-mails", pt: "Informações da conta e e-mails", it: "Informazioni account e e-mail", ru: "Данные аккаунта и почта", zh: "账户信息与邮件", ja: "アカウント情報とメール" },
-    "Hesap Bilgileri & E-postalar": { en: "Account Info & Emails", tr: "Hesap Bilgileri & E-postalar", es: "Información de cuenta y correos", de: "Kontoinformationen & E-Mails", fr: "Informations de compte & e-mails", pt: "Informações da conta e e-mails", it: "Informazioni account e e-mail", ru: "Данные аккаунта и почта", zh: "账户信息与邮件", ja: "アカウント情報とメール" },
-    
-    "Content & File Attachments": { en: "Content & File Attachments", tr: "İçerik & Dosya Ekleri", es: "Contenido y archivos adjuntos", de: "Inhalte & Dateianhänge", fr: "Contenu et pièces jointes", pt: "Conteúdo e anexos", it: "Contenuti e allegati", ru: "Контент и файлы", zh: "内容与文件附件", ja: "コンテンツとファイル添付" },
-    "İçerik & Dosya Ekleri": { en: "Content & File Attachments", tr: "İçerik & Dosya Ekleri", es: "Contenido y archivos adjuntos", de: "Inhalte & Dateianhänge", fr: "Contenu et pièces jointes", pt: "Conteúdo e anexos", it: "Contenuti e allegati", ru: "Контент и файлы", zh: "内容与文件附件", ja: "コンテンツとファイル添付" },
-    
+    "Web Search History": { en: "Web Search History", tr: "Web Arama Geçmişi", es: "Historial de búsqueda web", de: "Web-Suchverlauf", fr: "Historique de recherche Web", pt: "Histórico de pesquisa na web", it: "Cronologia ricerche web", ru: "История веб-поиска", zh: "网页搜索历史", ja: "Web検索履歴" },
+    "Visited Sites & URLs": { en: "Visited Sites & URLs", tr: "Ziyaret Edilen Tüm Siteler & URL'ler", es: "Sitios y URL visitados", de: "Besuchte Websites & URLs", fr: "Sites & URL visités", pt: "Sites e URLs visitados", it: "Siti e URL visitati", ru: "Посещенные сайты и URL", zh: "访问的网站与URL", ja: "訪問サイトとURL" },
+    "Cookies & Session Identifiers": { en: "Cookies & Session Identifiers", tr: "Çerezler & Oturum Bilgileri", es: "Cookies e identificadores de sesión", de: "Cookies & Sitzungsdaten", fr: "Cookies & Identifiants de session", pt: "Cookies e identificadores de sessão", it: "Cookie e identificatori di sessione", ru: "Файлы cookie и сеансы", zh: "Cookie与会话标识", ja: "クッキーとセッション情報" },
+    "Downloaded Files": { en: "Downloaded Files", tr: "İndirilen Dosyalar", es: "Archivos descargados", de: "Heruntergeladene Dateien", fr: "Fichiers téléchargés", pt: "Arquivos baixados", it: "File scaricati", ru: "Загруженные файлы", zh: "下载的文件", ja: "ダウンロードファイル" },
+    "Hardware Fingerprint": { en: "Hardware Fingerprint", tr: "Cihaz Donanım Parmak İzi", es: "Huella digital de hardware", de: "Hardware-Fingerabdruck", fr: "Empreinte matérielle", pt: "Impressão digital de hardware", it: "Impronta digitale hardware", ru: "Аппаратный отпечаток", zh: "硬件指纹", ja: "ハードウェアフィンガープリント" },
+    "Work Experience & Salary Estimates": { en: "Work Experience & Salary Estimates", tr: "İş Deneyimi & Maaş Skalası", es: "Experiencia laboral y salario", de: "Berufserfahrung & Gehalt", fr: "Expérience & salaire", pt: "Experiência profissional e salário", it: "Esperienza lavorativa e stipendio", ru: "Опыт работы и зарплата", zh: "工作经验与薪资", ja: "職歴・推定年収" },
+    "Educational History": { en: "Educational History", tr: "Eğitim Geçmişi", es: "Historial educativo", de: "Bildungsweg", fr: "Formation académique", pt: "Histórico acadêmico", it: "Percorso di studi", ru: "Образование", zh: "教育背景", ja: "学歴" },
+    "Corporate Connections": { en: "Corporate Connections", tr: "Kurumsal Bağlantılar", es: "Conexiones corporativas", de: "Unternehmensnetzwerk", fr: "Réseau professionnel", pt: "Conexões corporativas", it: "Connessioni aziendali", ru: "Деловые связи", zh: "企业人脉", ja: "社内人脈" },
+    "Job Searches & Company Views": { en: "Job Searches & Company Views", tr: "Baktığınız İlanlar & Şirketler", es: "Búsquedas de empleo y empresas", de: "Jobsuche & Firmenaufrufe", fr: "Recherches d'emploi & entreprises", pt: "Pesquisas de emprego e empresas", it: "Ricerche di lavoro e aziende", ru: "Поиск работы и просмотры", zh: "求职搜索与职位浏览", ja: "求人検索・企業閲覧" },
+    "Professional Direct Messages": { en: "Professional Direct Messages", tr: "Mesajlaşmalar", es: "Mensajes profesionales", de: "Berufliche Nachrichten", fr: "Messages professionnels", pt: "Mensagens profissionais", it: "Messaggi professionali", ru: "Деловая переписка", zh: "职场私信", ja: "ビジネスDM" },
+    "IP Address & Device Details": { en: "IP Address & Device Details", tr: "IP Adresi & Cihaz Bilgisi", es: "Dirección IP y detalles", de: "IP-Adresse & Gerätedetails", fr: "Adresse IP & détails appareil", pt: "Endereço IP e detalhes", it: "Indirizzo IP e dettagli", ru: "IP-адрес и детали устройства", zh: "IP地址与设备详情", ja: "IPアドレスとデバイス詳細" },
+    "Joined Channels & Groups": { en: "Joined Channels & Groups", tr: "Katılınan Gruplar & Kanallar", es: "Canales y grupos unidos", de: "Beigetretene Kanäle & Gruppen", fr: "Canaux & groupes rejoints", pt: "Canais e grupos integrados", it: "Canali e gruppi seguiti", ru: "Подписанные каналы и группы", zh: "加入的频道与群组", ja: "参加チャンネル・グループ" },
+    "Cloud Message History": { en: "Cloud Message History", tr: "Bulut Mesajlaşma Verileri", es: "Historial de mensajes en nube", de: "Cloud-Nachrichtenverlauf", fr: "Historique cloud des messages", pt: "Histórico de mensagens na nuvem", it: "Cronologia messaggi cloud", ru: "Облачная история сообщений", zh: "云端消息历史", ja: "クラウドメッセージ履歴" },
+    "Posts & Direct Messages": { en: "Posts & Direct Messages", tr: "Paylaşımlar & DM'ler", es: "Publicaciones y mensajes", de: "Beiträge & Direktnachrichten", fr: "Publications & messages", pt: "Publicações e mensagens", it: "Post e messaggi diretti", ru: "Посты и личные сообщения", zh: "帖子与私信", ja: "投稿とダイレクトメッセージ" },
+    "Political & Social Views": { en: "Political & Social Views", tr: "Siyasi & Sosyal Görüşler", es: "Opiniones políticas y sociales", de: "Politische & soziale Ansichten", fr: "Opinions politiques & sociales", pt: "Opiniões políticas e sociais", it: "Opinioni politiche e sociali", ru: "Политические и соц. взгляды", zh: "政治与社会观点", ja: "政治・社会的主張" },
+    "Clicked Outbound Links": { en: "Clicked Outbound Links", tr: "Tıklanan Bağlantılar", es: "Enlaces salientes visitados", de: "Angeklickte externe Links", fr: "Liens externes cliqués", pt: "Links externos clicados", it: "Link esterni cliccati", ru: "Переходы по ссылкам", zh: "点击的外链", ja: "クリックした外部リンク" },
+    "AI Model Training Telemetry": { en: "AI Model Training Telemetry", tr: "Grok AI Eğitim Verileri", es: "Telemetría de entrenamiento IA", de: "KI-Trainings-Telemetrie", fr: "Télémétrie d'entraînement IA", pt: "Telemetria de treino de IA", it: "Telemetria addestramento IA", ru: "Телеметрия обучения ИИ", zh: "AI模型训练遥测", ja: "AIモデル学習テレメトリ" },
+    "Listening & Viewing History": { en: "Listening & Viewing History", tr: "Dinleme Geçmişi & Müzik Zevkleri", es: "Historial de reproducción", de: "Wiedergabeverlauf", fr: "Historique d'écoute", pt: "Histórico de reprodução", it: "Cronologia ascolto", ru: "История прослушивания", zh: "收听与播放历史", ja: "再生履歴と音楽嗜好" },
+    "Podcast Category Choices": { en: "Podcast Category Choices", tr: "Podcast Tercihleri (Siyasi/Dini)", es: "Categorías de podcast escuchados", de: "Podcast-Kategorieneffekte", fr: "Catégories de podcasts", pt: "Categorias de podcasts", it: "Categorie podcast ascoltate", ru: "Предпочтения в подкастах", zh: "播客分类偏好", ja: "ポッドキャストカテゴリ選択" },
+    "Voice Search Queries": { en: "Voice Search Queries", tr: "Ses Komutları (Varsa)", es: "Consultas de búsqueda por voz", de: "Sprachsuchanfragen", fr: "Requêtes vocales", pt: "Consultas por voz", it: "Ricerche vocali", ru: "Голосовые запросы", zh: "语音搜索查询", ja: "音声検索クエリ" },
+    "Device Type & Network": { en: "Device Type & Network", tr: "Cihaz Türü", es: "Tipo de dispositivo y red", de: "Gerätetyp & Netzwerk", fr: "Type d'appareil & réseau", pt: "Tipo de dispositivo e rede", it: "Tipo dispositivo e rete", ru: "Тип устройства и сеть", zh: "设备类型与网络", ja: "デバイスタイプとネットワーク" },
+    "Approximate Location": { en: "Approximate Location", tr: "Konum (Yaklaşık)", es: "Ubicación aproximada", de: "Ungefährer Standort", fr: "Localisation approximative", pt: "Localização aproximada", it: "Posizione approssimativa", ru: "Приблизительная геолокация", zh: "大致位置", ja: "概算位置情報" },
+    "Watch & Search History": { en: "Watch & Search History", tr: "İzleme & Arama Geçmişi", es: "Historial de reproducción y búsqueda", de: "Wiedergabe- & Suchverlauf", fr: "Historique de visionnage & recherche", pt: "Histórico de exibições e pesquisas", it: "Cronologia visione e ricerche", ru: "История просмотров и поиска", zh: "观看与搜索历史", ja: "視聴・検索履歴" },
+    "Comments & Likes": { en: "Comments & Likes", tr: "Yorumlar & Beğeniler", es: "Comentarios y Me gusta", de: "Kommentare & Likes", fr: "Commentaires & J'aime", pt: "Comentários e curtidas", it: "Commenti e Mi piace", ru: "Комментарии и лайки", zh: "评论与点赞", ja: "コメントと高評価" },
+    "Watch Dwell Times & Abandon Drops": { en: "Watch Dwell Times & Abandon Drops", tr: "İzleme Süreleri & Bırakma Noktaları", es: "Retención de video y abandono", de: "Wiedergabezeit & Abbruchpunkte", fr: "Temps de rétention & abandons", pt: "Retenção de vídeo e abandono", it: "Tempo di permanenza e abbandono", ru: "Время удержания и уходы", zh: "观看时长与弃看点", ja: "視聴維持時間と離脱ポイント" },
+    "Device IP & Hardware ID": { en: "Device IP & Hardware ID", tr: "Cihaz IP & Donanım", es: "IP del dispositivo e ID de hardware", de: "Geräte-IP & Hardware-ID", fr: "IP appareil & ID matériel", pt: "IP do dispositivo e ID de hardware", it: "IP dispositivo e ID hardware", ru: "IP устройства и ID железа", zh: "设备IP与硬件ID", ja: "デバイスIPとハードウェアID" },
+    "Family & Social Network Graph": { en: "Family & Social Network Graph", tr: "Tüm Aile & Arkadaş Ağları", es: "Red familiar y social", de: "Familien- & soziales Netzwerk", fr: "Réseau familial & social", pt: "Rede familiar e social", it: "Rete familiare e sociale", ru: "Семейная и социальная сеть", zh: "家庭与社交网络图谱", ja: "家族・友人ネットワークグラフ" },
+    "Political & Religious Views": { en: "Political & Religious Views", tr: "Siyasi & Dini Görüşler", es: "Opiniones políticas y religiosas", de: "Politische & religiöse Ansichten", fr: "Opinions politiques & religieuses", pt: "Opiniões políticas e religiosas", it: "Opinioni politiche e religiose", ru: "Политические и религиозные взгляды", zh: "政治与宗教观点", ja: "政治・宗教的信条" },
+    "Off-App Web Activity": { en: "Off-App Web Activity", tr: "Off-Facebook Activity (Site dışı gezintiler)", es: "Actividad fuera de la aplicación", de: "Web-Aktivität außerhalb der App", fr: "Activité web hors application", pt: "Atividade web fora do aplicativo", it: "Attività web fuori dall'app", ru: "Внешняя веб-активность", zh: "应用外网页活动", ja: "アプリ外Webアクティビティ" },
+    "Facial Recognition Data": { en: "Facial Recognition Data", tr: "Yüz Tanıma Verisi", es: "Datos de reconocimiento facial", de: "Gesichtserkennungsdaten", fr: "Données de reconnaissance faciale", pt: "Dados de reconhecimento facial", it: "Dati di riconoscimento facciale", ru: "Данные распознавания лиц", zh: "人脸识别数据", ja: "顔認証データ" },
+    "Subreddit Subscriptions & Interests": { en: "Subreddit Subscriptions & Interests", tr: "Anonim Görünen İlgi Alanları & Subredditler", es: "Suscripciones e intereses de Subreddit", de: "Subreddit-Abos & Interessen", fr: "Abonnements et intérêts Subreddit", pt: "Inscrições e interesses do Subreddit", it: "Iscrizioni e interessi Subreddit", ru: "Подписки на Subreddit и интересы", zh: "Subreddit订阅与兴趣", ja: "Subreddit登録と関心事" },
+    "Google AI Training Data": { en: "Google AI Training Data", tr: "Google AI İnisiyatif Verisi", es: "Datos de entrenamiento para IA de Google", de: "Google KI-Trainingsdaten", fr: "Données d'entraînement IA Google", pt: "Dados de treinamento de IA do Google", it: "Dati addestramento IA Google", ru: "Данные обучения Google ИИ", zh: "Google AI训练数据", ja: "Google AI学習データ" },
+    "IP Address & Device Fingerprint": { en: "IP Address & Device Fingerprint", tr: "IP Adresi & Cihaz Parmak İzi", es: "Dirección IP y huella digital", de: "IP-Adresse & Geräte-Fingerabdruck", fr: "Adresse IP & empreinte appareil", pt: "Endereço IP e impressão digital", it: "Indirizzo IP e impronta dispositivo", ru: "IP-адрес и отпечаток устройства", zh: "IP地址与设备指纹", ja: "IPアドレスとデバイス識別子" },
+    "Account Info & Emails": { en: "Account Info & Emails", tr: "Hesap Bilgileri & E-postalar", es: "Información de cuenta y correos", de: "Kontoinformationen & E-Mails", fr: "Infos compte & e-mails", pt: "Informações da conta e e-mails", it: "Info account e e-mail", ru: "Данные аккаунта и почта", zh: "账户信息与邮件", ja: "アカウント情報とメール" },
+    "Content & File Attachments": { en: "Content & File Attachments", tr: "İçerik & Dosya Ekleri", es: "Contenido y archivos adjuntos", de: "Inhalte & Dateianhänge", fr: "Contenu & pièces jointes", pt: "Conteúdo e anexos", it: "Contenuto e allegati", ru: "Контент и файлы", zh: "内容与文件附件", ja: "コンテンツと添付ファイル" },
     "Work Habits": { en: "Work Habits", tr: "Çalışma Alışkanlıkları", es: "Hábitos de trabajo", de: "Arbeitsgewohnheiten", fr: "Habitudes de travail", pt: "Hábitos de trabalho", it: "Abitudini lavorative", ru: "Рабочие привычки", zh: "工作习惯", ja: "業務習慣" },
-    "Çalışma Alışkanlıkları": { en: "Work Habits", tr: "Çalışma Alışkanlıkları", es: "Hábitos de trabajo", de: "Arbeitsgewohnheiten", fr: "Habitudes de travail", pt: "Hábitos de trabalho", it: "Abitudini lavorative", ru: "Рабочие привычки", zh: "工作习惯", ja: "業務習慣" },
-    
     "Device ID & IP": { en: "Device ID & IP", tr: "Cihaz ID & IP", es: "ID de dispositivo e IP", de: "Geräte-ID & IP", fr: "ID appareil & IP", pt: "ID do dispositivo e IP", it: "ID dispositivo e IP", ru: "ID устройства и IP", zh: "设备ID与IP", ja: "デバイスIDとIP" },
-    "Cihaz ID & IP": { en: "Device ID & IP", tr: "Cihaz ID & IP", es: "ID de dispositivo e IP", de: "Geräte-ID & IP", fr: "ID appareil & IP", pt: "ID do dispositivo e IP", it: "ID dispositivo e IP", ru: "ID устройства и IP", zh: "设备ID与IP", ja: "デバイスIDとIP" },
-    
     "Phone Number / Account": { en: "Phone Number / Account", tr: "Telefon Numarası / Hesap", es: "Número de teléfono / Cuenta", de: "Telefonnummer / Konto", fr: "Numéro de téléphone / Compte", pt: "Número de telefone / Conta", it: "Numero di telefono / Account", ru: "Номер телефона / Аккаунт", zh: "电话号码/账户", ja: "電話番号/アカウント" },
-    "Telefon Numarası / Hesap": { en: "Phone Number / Account", tr: "Telefon Numarası / Hesap", es: "Número de teléfono / Cuenta", de: "Telefonnummer / Konto", fr: "Numéro de téléphone / Compte", pt: "Número de telefone / Conta", it: "Numero di telefono / Account", ru: "Номер телефона / Аккаунт", zh: "电话号码/账户", ja: "電話番号/アカウント" },
-    
     "Delivery Address & Location": { en: "Delivery Address & Location", tr: "Teslimat Adresi & Konum", es: "Dirección de entrega y ubicación", de: "Lieferadresse & Standort", fr: "Adresse de livraison & localisation", pt: "Endereço de entrega e localização", it: "Indirizzo di consegna e posizione", ru: "Адрес доставки и локация", zh: "配送地址与位置", ja: "配達先住所と位置情報" },
-    "Teslimat Adresi & Konum": { en: "Delivery Address & Location", tr: "Teslimat Adresi & Konum", es: "Dirección de entrega y ubicación", de: "Lieferadresse & Standort", fr: "Adresse de livraison & localisation", pt: "Endereço de entrega e localização", it: "Indirizzo di consegna e posizione", ru: "Адрес доставки и локация", zh: "配送地址与位置", ja: "配達先住所と位置情報" },
-    
-    "Device IP Info": { en: "Device IP Info", tr: "Cihaz IP Bilgisi", es: "Información IP del dispositivo", de: "Geräte-IP-Information", fr: "Information IP de l'appareil", pt: "Informação IP do dispositivo", it: "Informazione IP dispositivo", ru: "Информация IP устройства", zh: "设备IP信息", ja: "デバイスIP情報" },
-    "Cihaz IP Bilgisi": { en: "Device IP Info", tr: "Cihaz IP Bilgisi", es: "Información IP del dispositivo", de: "Geräte-IP-Information", fr: "Information IP de l'appareil", pt: "Informação IP do dispositivo", it: "Informazione IP dispositivo", ru: "Информация IP устройства", zh: "设备IP信息", ja: "デバイスIP情報" },
+    "Purchase History": { en: "Purchase History", tr: "Satın Alım Geçmişi", es: "Historial de compras", de: "Kaufverlauf", fr: "Historique d'achats", pt: "Histórico de compras", it: "Cronologia acquisti", ru: "История покупок", zh: "购买历史", ja: "購入履歴" },
+    "Device IP Info": { en: "Device IP Info", tr: "Cihaz IP Bilgisi", es: "Información IP del dispositivo", de: "Geräte-IP-Information", fr: "Information IP appareil", pt: "Informação IP do dispositivo", it: "Info IP dispositivo", ru: "Информация IP устройства", zh: "设备IP信息", ja: "デバイスIP情報" },
 
     // ─── Third-Party Destinations ───
-    "Third-Party Destinations": { en: "Third-Party Destinations", tr: "Kimlerle Paylaşılıyor?", es: "Destinos de terceros", de: "Drittanbieter-Ziele", fr: "Destinataires tiers", pt: "Destinos de terceiros", it: "Destinatari terzi", ru: "Сторонние получатели", zh: "第三方数据共享", ja: "第三者提供先" },
     "Meta Companies": { en: "Meta Companies", tr: "Meta Şirketler Grubu", es: "Empresas Meta", de: "Meta-Konzern", fr: "Groupe Meta", pt: "Empresas Meta", it: "Gruppo Meta", ru: "Группа компаний Meta", zh: "Meta公司集团", ja: "Metaグループ" },
-    "Meta Şirketler Grubu": { en: "Meta Companies", tr: "Meta Şirketler Grubu", es: "Empresas Meta", de: "Meta-Konzern", fr: "Groupe Meta", pt: "Empresas Meta", it: "Gruppo Meta", ru: "Группа компаний Meta", zh: "Meta公司集团", ja: "Metaグループ" },
-    
     "Law Enforcement (Requests)": { en: "Law Enforcement (Requests)", tr: "Kolluk Kuvvetleri (Talepler)", es: "Fuerzas del orden (Solicitudes)", de: "Strafverfolgung (Anfragen)", fr: "Services de police (Requêtes)", pt: "Autoridades policiais (Pedidos)", it: "Forze dell'ordine (Richieste)", ru: "Правоохранительные органы (Запросы)", zh: "执法机关(调取请求)", ja: "法執行機関 (要請)" },
-    "Kolluk Kuvvetleri (Talepler)": { en: "Law Enforcement (Requests)", tr: "Kolluk Kuvvetleri (Talepler)", es: "Fuerzas del orden (Solicitudes)", de: "Strafverfolgung (Anfragen)", fr: "Services de police (Requêtes)", pt: "Autoridades policiais (Pedidos)", it: "Forze dell'ordine (Richieste)", ru: "Правоохранительные органы (Запросы)", zh: "执法机关(调取请求)", ja: "法執行機関 (要請)" },
-    
     "Internal Analytics Engines": { en: "Internal Analytics Engines", tr: "İç Analitik Servisleri", es: "Servicios de analítica interna", de: "Interne Analyse-Dienste", fr: "Services d'analyse interne", pt: "Serviços de análise interna", it: "Servizi di analisi interna", ru: "Внутренние аналитические службы", zh: "内部分析服务", ja: "社内アナリティクスサービス" },
-    "İç Analitik Servisleri": { en: "Internal Analytics Engines", tr: "İç Analitik Servisleri", es: "Servicios de analítica interna", de: "Interne Analyse-Dienste", fr: "Services d'analyse interne", pt: "Serviços de análise interna", it: "Servizi di analisi interna", ru: "Внутренние аналитические службы", zh: "内部分析服务", ja: "社内アナリティクスサービス" },
-    
     "Advertisers (Targeted Ads)": { en: "Advertisers (Targeted Ads)", tr: "Reklamverenler (Hedefli Reklam)", es: "Anunciantes (Anuncios dirigidos)", de: "Werbepartner (Zielgerichtete Werbung)", fr: "Annonceurs (Publicités ciblées)", pt: "Anunciantes (Anúncios direcionados)", it: "Inserzionisti (Annunci mirati)", ru: "Рекламодатели (Таргетированная реклама)", zh: "广告商(定向广告)", ja: "広告主 (ターゲティング広告)" },
-    "Reklamverenler (Targeted Ads)": { en: "Advertisers (Targeted Ads)", tr: "Reklamverenler (Hedefli Reklam)", es: "Anunciantes (Anuncios dirigidos)", de: "Werbepartner (Zielgerichtete Werbung)", fr: "Annonceurs (Publicités ciblées)", pt: "Anunciantes (Anúncios direcionados)", it: "Inserzionisti (Annunci mirati)", ru: "Рекламодатели (Таргетированная реклама)", zh: "广告商(定向广告)", ja: "広告主 (ターゲティング広告)" },
-    
-    "Third-Party Advertisers": { en: "Third-Party Advertisers", tr: "Üçüncü Taraf Reklamverenler", es: "Anunciantes de terceros", de: "Drittanbieter-Werbepartner", fr: "Annonceurs tiers", pt: "Anunciantes terceiros", it: "Inserzionisti terzi", ru: "Сторонние рекламодатели", zh: "第三方广告商", ja: "サードパーティ広告主" },
-    "Üçüncü Taraf Reklamverenler": { en: "Third-Party Advertisers", tr: "Üçüncü Taraf Reklamverenler", es: "Anunciantes de terceros", de: "Drittanbieter-Werbepartner", fr: "Annonceurs tiers", pt: "Anunciantes terceiros", it: "Inserzionisti terzi", ru: "Сторонние рекламодатели", zh: "第三方广告商", ja: "サードパーティ広告主" },
-    
     "Data Brokers": { en: "Data Brokers", tr: "Veri Broker'ları", es: "Corredores de datos", de: "Datenhändler", fr: "Courtiers en données", pt: "Corretores de dados", it: "Broker di dati", ru: "Дата-брокеры", zh: "数据经纪商", ja: "データブローカー" },
-    "Veri Broker'ları": { en: "Data Brokers", tr: "Veri Broker'ları", es: "Corredores de datos", de: "Datenhändler", fr: "Courtiers en données", pt: "Corretores de dados", it: "Broker di dati", ru: "Дата-брокеры", zh: "数据经纪商", ja: "データブローカー" },
-    
     "Meta Audience Network": { en: "Meta Audience Network", tr: "Meta Reklam Ağı", es: "Red de audiencia Meta", de: "Meta-Werbenetzwerk", fr: "Réseau publicitaire Meta", pt: "Rede de anúncios Meta", it: "Rete pubblicitaria Meta", ru: "Рекламная сеть Meta", zh: "Meta受众网络", ja: "Metaオーディエンスネットワーク" },
-    "Meta Reklam Ağı": { en: "Meta Audience Network", tr: "Meta Reklam Ağı", es: "Red de audiencia Meta", de: "Meta-Werbenetzwerk", fr: "Réseau publicitaire Meta", pt: "Rede de anúncios Meta", it: "Rete pubblicitaria Meta", ru: "Рекламная сеть Meta", zh: "Meta受众网络", ja: "Metaオーディエンスネットワーク" },
-    
     "Third-Party Content Partners": { en: "Third-Party Content Partners", tr: "3. Taraf İçerik Ortakları", es: "Socios de contenido de terceros", de: "Drittanbieter-Inhaltspartner", fr: "Partenaires de contenu tiers", pt: "Parceiros de conteúdo terceiros", it: "Partner di contenuti terzi", ru: "Сторонние контент-партнеры", zh: "第三方内容合作伙伴", ja: "サードパーティコンテンツパートナー" },
-    "3. Taraf İçerik Ortakları": { en: "Third-Party Content Partners", tr: "3. Taraf İçerik Ortakları", es: "Socios de contenido de terceros", de: "Drittanbieter-Inhaltspartner", fr: "Partenaires de contenu tiers", pt: "Parceiros de conteúdo terceiros", it: "Partner di contenuti terzi", ru: "Сторонние контент-партнеры", zh: "第三方内容合作伙伴", ja: "サードパーティコンテンツパートナー" },
-    
     "ByteDance Global/Regional Servers": { en: "ByteDance Global/Regional Servers", tr: "ByteDance Çin/Global Sunucuları", es: "Servidores globales de ByteDance", de: "ByteDance Globale Server", fr: "Serveurs mondiaux ByteDance", pt: "Servidores globais ByteDance", it: "Server globali ByteDance", ru: "Глобальные серверы ByteDance", zh: "字节跳动全球/区域服务器", ja: "ByteDanceグローバルサーバー" },
-    "ByteDance Çin/Global Sunucuları": { en: "ByteDance Global/Regional Servers", tr: "ByteDance Çin/Global Sunucuları", es: "Servidores globales de ByteDance", de: "ByteDance Globale Server", fr: "Serveurs mondiaux ByteDance", pt: "Servidores globais ByteDance", it: "Server globali ByteDance", ru: "Глобальные серверы ByteDance", zh: "字节跳动全球/区域服务器", ja: "ByteDanceグローバルサーバー" },
-    
     "Regulatory Jurisdiction Entities": { en: "Regulatory Jurisdiction Entities", tr: "Gözetim Kanunları Kapsamındaki Birimler", es: "Entidades bajo jurisdicción regulatoria", de: "Behörden unter gesetzlicher Überwachung", fr: "Entités sous juridiction réglementaire", pt: "Entidades sob jurisdição regulatória", it: "Entità sotto giurisdizione normativa", ru: "Субъекты нормативно-правовой юрисдикции", zh: "监管辖区实体", ja: "管轄法規制対象エンティティ" },
-    "Çin Gözetim Kanunları Kapsamında Erişilebilir Birimler": { en: "Regulatory Jurisdiction Entities", tr: "Gözetim Kanunları Kapsamındaki Birimler", es: "Entidades bajo jurisdicción regulatoria", de: "Behörden unter gesetzlicher Überwachung", fr: "Entités sous juridiction réglementaire", pt: "Entidades sob jurisdição regulatória", it: "Entità sotto giurisdizione normativa", ru: "Субъекты нормативно-правовой юрисдикции", zh: "监管辖区实体", ja: "管轄法規制対象エンティティ" },
-    
     "Ad Network Partners": { en: "Ad Network Partners", tr: "Reklam Ortakları", es: "Socios publicitarios", de: "Werbepartner", fr: "Partenaires publicitaires", pt: "Parceiros de anúncios", it: "Partner pubblicitari", ru: "Рекламные партнеры", zh: "广告合作伙伴", ja: "広告パートナー" },
-    "Reklam Ortakları": { en: "Ad Network Partners", tr: "Reklam Ortakları", es: "Socios publicitarios", de: "Werbepartner", fr: "Partenaires publicitaires", pt: "Parceiros de anúncios", it: "Partner pubblicitari", ru: "Рекламные партнеры", zh: "广告合作伙伴", ja: "広告パートナー" },
-    
-    "Google Privacy Sandbox / Ad Network": { en: "Google Privacy Sandbox / Ad Network", tr: "Google Privacy Sandbox / Reklam Ağı", es: "Google Privacy Sandbox / Red de anuncios", de: "Google Privacy Sandbox / Werbenetzwerk", fr: "Google Privacy Sandbox / Réseau pub", pt: "Google Privacy Sandbox / Rede de anúncios", it: "Google Privacy Sandbox / Rete annunci", ru: "Google Privacy Sandbox / Рекламная сеть", zh: "Google Privacy Sandbox / 广告网络", ja: "Google Privacy Sandbox / 広告ネットワーク" },
-    
-    "Web Trackers & Beacons": { en: "Web Trackers & Beacons", tr: "Web İzleyicileri", es: "Rastreadores web y balizas", de: "Web-Tracker & Beacons", fr: "Traqueurs Web & Balises", pt: "Rastreadores Web e Beacons", it: "Tracker web e beacon", ru: "Веб-трекеры и маяки", zh: "网页追踪器与网络信标", ja: "Webトラッカーとビーコン" },
-    "Web İzleyicileri": { en: "Web Trackers & Beacons", tr: "Web İzleyicileri", es: "Rastreadores web y balizas", de: "Web-Tracker & Beacons", fr: "Traqueurs Web & Balises", pt: "Rastreadores Web e Beacons", it: "Tracker web e beacon", ru: "Веб-трекеры и маяки", zh: "网页追踪器与网络信标", ja: "Webトラッカーとビーコン" },
-    
-    "Analytics Providers": { en: "Analytics Providers", tr: "Analitik Sağlayıcıları", es: "Proveedores de analítica", de: "Analyse-Anbieter", fr: "Fournisseurs d'analyse", pt: "Provedores de análise", it: "Fornitori di analisi", ru: "Поставщики аналитики", zh: "分析服务提供商", ja: "アナリティクスプロバイダー" },
-    "Analitik Sağlayıcıları": { en: "Analytics Providers", tr: "Analitik Sağlayıcıları", es: "Proveedores de analítica", de: "Analyse-Anbieter", fr: "Fournisseurs d'analyse", pt: "Provedores de análise", it: "Fornitori di analisi", ru: "Поставщики аналитики", zh: "分析服务提供商", ja: "アナリティクスプロバイダー" },
-    
-    "Analytics Partners": { en: "Analytics Partners", tr: "Analitik Ortakları", es: "Socios de analítica", de: "Analytics-Partner", fr: "Partenaires d'analyse", pt: "Parceiros de análise", it: "Partner analitici", ru: "Аналитические партнеры", zh: "分析合作伙伴", ja: "アナリティクスパートナー" },
-    "Analitik Ortakları": { en: "Analytics Partners", tr: "Analitik Ortakları", es: "Socios de analítica", de: "Analytics-Partner", fr: "Partenaires d'analyse", pt: "Parceiros de análise", it: "Partner analitici", ru: "Аналитические партнеры", zh: "分析合作伙伴", ja: "アナリティクスパートナー" },
-    
     "Google Ad & Analytics Systems": { en: "Google Ad & Analytics Systems", tr: "Google Reklam & Analitik Sistemleri", es: "Sistemas de publicidad y análisis de Google", de: "Google Werbe- & Analysesysteme", fr: "Systèmes publicitaires et analytiques Google", pt: "Sistemas de anúncios e análise do Google", it: "Sistemi pubblicitari e analitici Google", ru: "Рекламные и аналитические системы Google", zh: "Google广告与分析系统", ja: "Google広告・分析システム" },
-    "Google Reklam & Analitik Sistemleri": { en: "Google Ad & Analytics Systems", tr: "Google Reklam & Analitik Sistemleri", es: "Sistemas de publicidad y análisis de Google", de: "Google Werbe- & Analysesysteme", fr: "Systèmes publicitaires et analytiques Google", pt: "Sistemas de anúncios e análise do Google", it: "Sistemi pubblicitari e analitici Google", ru: "Рекламные и аналитические системы Google", zh: "Google广告与分析系统", ja: "Google広告・分析システム" },
-    
     "Automated Content Scanners": { en: "Automated Content Scanners", tr: "Otomatik İçerik Tarayıcıları", es: "Escáneres de contenido automáticos", de: "Automatisierte Inhaltsscanner", fr: "Scanners de contenu automatisés", pt: "Scanners de conteúdo automatizados", it: "Scanner di contenuti automatizzati", ru: "Автоматические сканеры контента", zh: "自动内容扫描器", ja: "自動コンテンツスキャナー" },
-    "Otomatik İçerik Tarayıcıları (Spam/AI eğitimi)": { en: "Automated Content Scanners", tr: "Otomatik İçerik Tarayıcıları", es: "Escáneres de contenido automáticos", de: "Automatisierte Inhaltsscanner", fr: "Scanners de contenu automatisés", pt: "Scanners de conteúdo automatizados", it: "Scanner di contenuti automatizzati", ru: "Автоматические сканеры контента", zh: "自动内容扫描器", ja: "自動コンテンツスキャナー" },
-    
     "Legal Requests": { en: "Legal Requests", tr: "Resmi Hukuki Talepler", es: "Solicitudes legales", de: "Rechtliche Anfragen", fr: "Demandes légales", pt: "Solicitações legais", it: "Richieste legali", ru: "Юридические запросы", zh: "法律请求", ja: "法的要請" },
-    "Resmi Hukuki Talepler": { en: "Legal Requests", tr: "Resmi Hukuki Talepler", es: "Solicitudes legales", de: "Rechtliche Anfragen", fr: "Demandes légales", pt: "Solicitações legais", it: "Richieste legali", ru: "Юридические запросы", zh: "法律请求", ja: "法的要請" },
-    
+    "Google Privacy Sandbox / Ad Network": { en: "Google Privacy Sandbox / Ad Network", tr: "Google Privacy Sandbox / Reklam Ağı", es: "Google Privacy Sandbox / Red de anuncios", de: "Google Privacy Sandbox / Werbenetzwerk", fr: "Google Privacy Sandbox / Réseau pub", pt: "Google Privacy Sandbox / Rede de anúncios", it: "Google Privacy Sandbox / Rete annunci", ru: "Google Privacy Sandbox / Рекламная сеть", zh: "Google Privacy Sandbox / 广告网络", ja: "Google Privacy Sandbox / 広告ネットワーク" },
+    "Web Trackers & Beacons": { en: "Web Trackers & Beacons", tr: "Web İzleyicileri", es: "Rastreadores web y balizas", de: "Web-Tracker & Beacons", fr: "Traqueurs Web & Balises", pt: "Rastreadores Web e Beacons", it: "Tracker web e beacon", ru: "Веб-трекеры и маяки", zh: "网页追踪器与网络信标", ja: "Webトラッカーとビーコン" },
+    "Analytics Providers": { en: "Analytics Providers", tr: "Analitik Sağlayıcıları", es: "Proveedores de analítica", de: "Analyse-Anbieter", fr: "Fournisseurs d'analyse", pt: "Provedores de análise", it: "Fornitori di analisi", ru: "Поставщики аналитики", zh: "分析服务提供商", ja: "アナリティクスプロバイダー" },
+    "Microsoft Group Companies": { en: "Microsoft Group Companies", tr: "Microsoft Şirketler Grubu", es: "Empresas de Microsoft", de: "Microsoft-Konzern", fr: "Groupe Microsoft", pt: "Empresas da Microsoft", it: "Gruppo Microsoft", ru: "Группа компаний Microsoft", zh: "微软公司集团", ja: "Microsoftグループ" },
+    "HR & Recruitment Agencies": { en: "HR & Recruitment Agencies", tr: "İK & İşe Alım Acenteleri", es: "Agencias de empleo y RRHH", de: "Personal- & Recruiting-Agenturen", fr: "Agences RH & recrutement", pt: "Agências de RH e recrutamento", it: "Agenzie RU e reclutamento", ru: "Кадровые и рекрутинговые агентства", zh: "人力资源与招聘机构", ja: "HR・人材派遣会社" },
+    "B2B Data Brokers & Sales Engines": { en: "B2B Data Brokers & Sales Engines", tr: "B2B Veri Broker'ları & Sales Navigator", es: "Corredores de datos B2B y ventas", de: "B2B-Datenhändler & Vertriebssysteme", fr: "Courtiers en données B2B", pt: "Corretores de dados B2B", it: "Broker dati B2B", ru: "B2B дата-брокеры", zh: "B2B数据经纪商与销售引擎", ja: "B2Bデータブローカー・営業ツール" },
+    "Telegram Server Infrastructure": { en: "Telegram Server Infrastructure", tr: "Telegram Sunucu Altyapısı", es: "Infraestructura de servidores de Telegram", de: "Telegram-Serverinfrastruktur", fr: "Infrastructure serveurs Telegram", pt: "Infraestrutura de servidores do Telegram", it: "Infrastruttura server Telegram", ru: "Серверная инфраструктура Telegram", zh: "Telegram服务器基础设施", ja: "Telegramサーバーインフラ" },
+    "Legal & Security Subpoenas": { en: "Legal & Security Subpoenas", tr: "Resmi Mahkeme/Terör İnceleme Talepleri", es: "Citaciones legales y de seguridad", de: "Rechtliche & Sicherheitsanfragen", fr: "Citations à comparaître & sécurité", pt: "Intimações legais e de segurança", it: "Mandati legali e di sicurezza", ru: "Судебные и прокурорские запросы", zh: "法律与安全调取令", ja: "法的・治安上の召喚状" },
+    "Grok AI / xAI Training": { en: "Grok AI / xAI Training", tr: "Grok AI / xAI Eğitimi", es: "Entrenamiento de Grok AI / xAI", de: "Grok AI / xAI Training", fr: "Entraînement Grok AI / xAI", pt: "Treino do Grok AI / xAI", it: "Addestramento Grok AI / xAI", ru: "Обучение Grok AI / xAI", zh: "Grok AI / xAI 训练", ja: "Grok AI / xAI 学習" },
+    "Data API Licensees": { en: "Data API Licensees", tr: "Veri Satış API İstemcileri", es: "Licenciatarios de API de datos", de: "Daten-API-Lizenznehmer", fr: "Licenciés d'API de données", pt: "Licenciados da API de dados", it: "Licenziatari API dati", ru: "Лицензиаты API данных", zh: "数据API被许可人", ja: "データAPIライセンシー" },
+    "Record Labels & Content Rights Holders": { en: "Record Labels & Content Rights Holders", tr: "Müzik Şirketleri (Labels)", es: "Discográficas y titulares de derechos", de: "Plattenlabels & Rechteinhaber", fr: "Labels de musique & ayants droit", pt: "Gravadoras e detentores de direitos", it: "Etichette discografiche e detentori di diritti", ru: "Музыкальные лейблы и правообладатели", zh: "唱片公司与内容版权方", ja: "レコード会社・権利保有者" },
+    "Content Creators (Analytics)": { en: "Content Creators (Analytics)", tr: "İçerik Üreticileri (Analitik)", es: "Creadores de contenido (Analítica)", de: "Content Creator (Analysen)", fr: "Créateurs de contenu (Analyses)", pt: "Criadores de conteúdo (Análises)", it: "Creatori di contenuti (Analisi)", ru: "Создатели контента (Аналитика)", zh: "内容创作者(分析)", ja: "クリエイター (アナリティクス)" },
+    "Google AI Training Systems": { en: "Google AI Training Systems", tr: "Google AI Servisleri", es: "Sistemas de entrenamiento IA de Google", de: "Google KI-Trainingssysteme", fr: "Systèmes d'entraînement IA Google", pt: "Sistemas de treinamento de IA do Google", it: "Sistemi addestramento IA Google", ru: "Системы обучения Google ИИ", zh: "Google AI训练系统", ja: "Google AI学習システム" },
+    "Google AI Training Partners": { en: "Google AI Training Partners", tr: "Google LLM Eğitim Ortaklığı", es: "Socios de entrenamiento IA de Google", de: "Google KI-Trainingspartner", fr: "Partenaires d'entraînement IA Google", pt: "Parceiros de treinamento de IA do Google", it: "Partner addestramento IA Google", ru: "Партнеры обучения Google ИИ", zh: "Google AI训练合作伙伴", ja: "Google AI学習パートナー" },
+    "Third-Party Advertisers": { en: "Third-Party Advertisers", tr: "Üçüncü Taraf Reklamverenler", es: "Anunciantes de terceros", de: "Drittanbieter-Werbepartner", fr: "Annonceurs tiers", pt: "Anunciantes terceiros", it: "Inserzionisti terzi", ru: "Сторонние рекламодатели", zh: "第三方广告商", ja: "サードパーティ広告主" },
+    "Analytics Partners": { en: "Analytics Partners", tr: "Analitik Ortakları", es: "Socios de analítica", de: "Analytics-Partner", fr: "Partenaires d'analyse", pt: "Parceiros de análise", it: "Partner analitici", ru: "Аналитические партнеры", zh: "分析合作伙伴", ja: "アナリティクスパートナー" },
     "Data Processors": { en: "Data Processors", tr: "Veri İşleyiciler", es: "Procesadores de datos", de: "Datenverarbeiter", fr: "Sous-traitants de données", pt: "Processadores de dados", it: "Responsabili del trattamento dati", ru: "Обработчики данных", zh: "数据处理商", ja: "データ処理業者" },
-    "Veri İşleyiciler": { en: "Data Processors", tr: "Veri İşleyiciler", es: "Procesadores de datos", de: "Datenverarbeiter", fr: "Sous-traitants de données", pt: "Processadores de dados", it: "Responsabili del trattamento dati", ru: "Обработчики данных", zh: "数据处理商", ja: "データ処理業者" },
 
     // ─── Permissions ───
-    "Camera": { en: "Camera", tr: "Kamera", es: "Cámara", de: "Kamera", fr: "Appareil photo", pt: "Câmera", it: "Fotocamera", ru: "Камера", zh: "摄像头", ja: "カメラ" },
-    "Kamera": { en: "Camera", tr: "Kamera", es: "Cámara", de: "Kamera", fr: "Appareil photo", pt: "Câmera", it: "Fotocamera", ru: "Камера", zh: "摄像头", ja: "カメラ" },
-    
-    "Microphone": { en: "Microphone", tr: "Mikrofon", es: "Micrófono", de: "Mikrofon", fr: "Microphone", pt: "Microfone", it: "Microfono", ru: "Микрофон", zh: "麦克风", ja: "マイク" },
-    "Mikrofon": { en: "Microphone", tr: "Mikrofon", es: "Micrófono", de: "Mikrofon", fr: "Microphone", pt: "Microfone", it: "Microfono", ru: "Микрофон", zh: "麦克风", ja: "マイク" },
-    
-    "Location": { en: "Location", tr: "Konum", es: "Ubicación", de: "Standort", fr: "Localisation", pt: "Localização", it: "Posizione", ru: "Геолокация", zh: "位置", ja: "位置情報" },
-    "Konum": { en: "Location", tr: "Konum", es: "Ubicación", de: "Standort", fr: "Localisation", pt: "Localização", it: "Posizione", ru: "Геолокация", zh: "位置", ja: "位置情報" },
-    
-    "Photos & Gallery": { en: "Photos & Gallery", tr: "Fotoğraflar & Galeri", es: "Fotos y galería", de: "Fotos & Galerie", fr: "Photos & Galerie", pt: "Fotos e galeria", it: "Foto e galleria", ru: "Фото и галерея", zh: "照片与相册", ja: "写真とギャラリー" },
-    "Fotoğraflar": { en: "Photos & Gallery", tr: "Fotoğraflar & Galeri", es: "Fotos y galería", de: "Fotos & Galerie", fr: "Photos & Galerie", pt: "Fotos e galeria", it: "Foto e galleria", ru: "Фото и галерея", zh: "照片与相册", ja: "写真とギャラリー" },
-    "Fotoğraf Arşivi": { en: "Photos & Gallery", tr: "Fotoğraflar & Galeri", es: "Fotos y galería", de: "Fotos & Galerie", fr: "Photos & Galerie", pt: "Fotos e galeria", it: "Foto e galleria", ru: "Фото и галерея", zh: "照片与相册", ja: "写真とギャラリー" },
-    
     "Contacts": { en: "Contacts", tr: "Kişiler", es: "Contactos", de: "Kontakte", fr: "Contacts", pt: "Contatos", it: "Contatti", ru: "Контакты", zh: "联系人", ja: "連絡先" },
-    "Kişiler": { en: "Contacts", tr: "Kişiler", es: "Contactos", de: "Kontakte", fr: "Contacts", pt: "Contatos", it: "Contatti", ru: "Контакты", zh: "联系人", ja: "連絡先" },
-    
+    "Camera": { en: "Camera", tr: "Kamera", es: "Cámara", de: "Kamera", fr: "Appareil photo", pt: "Câmera", it: "Fotocamera", ru: "Камера", zh: "摄像头", ja: "カメラ" },
+    "Microphone": { en: "Microphone", tr: "Mikrofon", es: "Micrófono", de: "Mikrofon", fr: "Microphone", pt: "Microfone", it: "Microfono", ru: "Микрофон", zh: "麦克风", ja: "マイク" },
+    "Location": { en: "Location", tr: "Konum", es: "Ubicación", de: "Standort", fr: "Localisation", pt: "Localização", it: "Posizione", ru: "Геолокация", zh: "位置", ja: "位置情報" },
+    "Storage / Gallery": { en: "Storage / Gallery", tr: "Depolama / Galeri", es: "Almacenamiento / Galería", de: "Speicher / Galerie", fr: "Stockage / Galerie", pt: "Armazenamento / Galeria", it: "Archiviazione / Galleria", ru: "Хранилище / Галерея", zh: "存储/相册", ja: "ストレージ/ギャラリー" },
+    "Background Data": { en: "Background Data", tr: "Arka Plan Verisi", es: "Datos en segundo plano", de: "Hintergrunddaten", fr: "Données en arrière-plan", pt: "Dados em segundo plano", it: "Dati in background", ru: "Фоновые данные", zh: "后台数据", ja: "バックグラウンドデータ" },
+    "Photos & Gallery": { en: "Photos & Gallery", tr: "Fotoğraflar & Galeri", es: "Fotos y galería", de: "Fotos & Galerie", fr: "Photos & Galerie", pt: "Fotos e galeria", it: "Foto e galleria", ru: "Фото и галерея", zh: "照片与相册", ja: "写真とギャラリー" },
     "Device Fingerprint": { en: "Device Fingerprint", tr: "Cihaz Parmak İzi", es: "Huella digital de dispositivo", de: "Geräte-Fingerabdruck", fr: "Empreinte appareil", pt: "Impressão digital de dispositivo", it: "Impronta dispositivo", ru: "Отпечаток устройства", zh: "设备指纹", ja: "デバイスフィンガープリント" },
-    "Cihaz Parmak İzi": { en: "Device Fingerprint", tr: "Cihaz Parmak İzi", es: "Huella digital de dispositivo", de: "Geräte-Fingerabdruck", fr: "Empreinte appareil", pt: "Impressão digital de dispositivo", it: "Impronta dispositivo", ru: "Отпечаток устройства", zh: "设备指纹", ja: "デバイスフィンガープリント" },
-    
-    "Storage / File Access": { en: "Storage / File Access", tr: "Depolama / Dosya Erişimi", es: "Almacenamiento y archivos", de: "Speicher- / Dateizugriff", fr: "Stockage / Fichiers", pt: "Armazenamento e arquivos", it: "Archiviazione / Accesso file", ru: "Хранилище / Доступ к файлам", zh: "存储/文件访问", ja: "ストレージ/ファイルアクセス" },
-    "Depolama / Dosya Erişimi": { en: "Storage / File Access", tr: "Depolama / Dosya Erişimi", es: "Almacenamiento y archivos", de: "Speicher- / Dateizugriff", fr: "Stockage / Fichiers", pt: "Armazenamento e arquivos", it: "Archiviazione / Accesso file", ru: "Хранилище / Доступ к файлам", zh: "存储/文件访问", ja: "ストレージ/ファイルアクセス" },
-    "Depolama/Galeri": { en: "Storage / Gallery", tr: "Depolama / Galeri", es: "Almacenamiento / Galería", de: "Speicher / Galerie", fr: "Stockage / Galerie", pt: "Armazenamento / Galeria", it: "Archiviazione / Galleria", ru: "Хранилище / Галерея", zh: "存储/相册", ja: "ストレージ/ギャラリー" },
-    
-    "Calendar": { en: "Calendar", tr: "Takvim", es: "Calendario", de: "Kalender", fr: "Calendrier", pt: "Calendário", it: "Calendario", ru: "Календарь", zh: "日历", ja: "カレンダー" },
-    "Takvim": { en: "Calendar", tr: "Takvim", es: "Calendario", de: "Kalender", fr: "Calendrier", pt: "Calendário", it: "Calendario", ru: "Календарь", zh: "日历", ja: "カレンダー" },
-    
-    "Background Sync": { en: "Background Sync", tr: "Arka Plan Senkronizasyonu", es: "Sincronización en segundo plano", de: "Hintergrund-Synchronisation", fr: "Synchronisation en arrière-plan", pt: "Sincronização em segundo plano", it: "Sincronizzazione in background", ru: "Фоновая синхронизация", zh: "后台同步", ja: "バックグラウンド同期" },
-    "Arka Plan Senkronizasyonu": { en: "Background Sync", tr: "Arka Plan Senkronizasyonu", es: "Sincronización en segundo plano", de: "Hintergrund-Synchronisation", fr: "Synchronisation en arrière-plan", pt: "Sincronização em segundo plano", it: "Sincronizzazione in background", ru: "Фоновая синхронизация", zh: "后台同步", ja: "バックグラウンド同期" },
-    "Arka Plan Verisi": { en: "Background Data", tr: "Arka Plan Verisi", es: "Datos en segundo plano", de: "Hintergrunddaten", fr: "Données en arrière-plan", pt: "Dados em segundo plano", it: "Dati in background", ru: "Фоновые данные", zh: "后台数据", ja: "バックグラウンドデータ" },
-    
-    "Storage": { en: "Storage", tr: "Depolama", es: "Almacenamiento", de: "Speicher", fr: "Stockage", pt: "Armazenamento", it: "Archiviazione", ru: "Хранилище", zh: "存储", ja: "ストレージ" },
-    "Depolama": { en: "Storage", tr: "Depolama", es: "Almacenamiento", de: "Speicher", fr: "Stockage", pt: "Armazenamento", it: "Archiviazione", ru: "Хранилище", zh: "存储", ja: "ストレージ" },
-    
-    "Notifications": { en: "Notifications", tr: "Bildirimler", es: "Notificaciones", de: "Benachrichtigungen", fr: "Notifications", pt: "Notificações", it: "Notifiche", ru: "Уведомления", zh: "通知", ja: "通知" },
-    "Bildirimler": { en: "Notifications", tr: "Bildirimler", es: "Notificaciones", de: "Benachrichtigungen", fr: "Notifications", pt: "Notificações", it: "Notifiche", ru: "Уведомления", zh: "通知", ja: "通知" },
-    
-    "Microphone (Voice Messages)": { en: "Microphone (Voice Messages)", tr: "Mikrofon (Sesli Mesajlar)", es: "Micrófono (Mensajes de voz)", de: "Mikrofon (Sprachnachrichten)", fr: "Microphone (Messages vocaux)", pt: "Microfone (Mensagens de voz)", it: "Microfono (Messaggi vocali)", ru: "Микрофон (голосовые)", zh: "麦克风(语音消息)", ja: "マイク (音声メッセージ)" },
-    "Mikrofon (Sesli Mesajlar)": { en: "Microphone (Voice Messages)", tr: "Mikrofon (Sesli Mesajlar)", es: "Micrófono (Mensajes de voz)", de: "Mikrofon (Sprachnachrichten)", fr: "Microphone (Messages vocaux)", pt: "Microfone (Mensagens de voz)", it: "Microfono (Messaggi vocali)", ru: "Микрофон (голосовые)", zh: "麦克风(语音消息)", ja: "マイク (音声メッセージ)" },
-    
-    "Bluetooth": { en: "Bluetooth", tr: "Bluetooth", es: "Bluetooth", de: "Bluetooth", fr: "Bluetooth", pt: "Bluetooth", it: "Bluetooth", ru: "Bluetooth", zh: "蓝牙", ja: "Bluetooth" },
-    
-    "Full Internet Access": { en: "Full Internet Access", tr: "Tam İnternet Erişimi", es: "Acceso total a Internet", de: "Voller Internetzugriff", fr: "Accès Internet complet", pt: "Acesso total à Internet", it: "Accesso a Internet completo", ru: "Полный доступ в Интернет", zh: "完全互联网访问", ja: "完全なインターネットアクセス" },
-    "Tam İnternet Erişimi": { en: "Full Internet Access", tr: "Tam İnternet Erişimi", es: "Acceso total a Internet", de: "Voller Internetzugriff", fr: "Accès Internet complet", pt: "Acesso total à Internet", it: "Accesso a Internet completo", ru: "Полный доступ в Интернет", zh: "完全互联网访问", ja: "完全なインターネットアクセス" },
-    
     "Clipboard Access": { en: "Clipboard Access", tr: "Pano Erişimi", es: "Acceso al portapapeles", de: "Zwischenablage-Zugriff", fr: "Accès au presse-papiers", pt: "Acesso à área de transferência", it: "Accesso agli appunti", ru: "Доступ к буферу обмена", zh: "剪贴板访问", ja: "クリップボードアクセス" },
-    "Pano Erişimi (Clipboard)": { en: "Clipboard Access", tr: "Pano Erişimi", es: "Acceso al portapapeles", de: "Zwischenablage-Zugriff", fr: "Accès au presse-papiers", pt: "Acesso à área de transferência", it: "Accesso agli appunti", ru: "Доступ к буферу обмена", zh: "剪贴板访问", ja: "クリップボードアクセス" },
-    
     "Network Device Analysis": { en: "Network Device Analysis", tr: "Ağ Cihazları Analizi", es: "Análisis de dispositivos de red", de: "Netzwerkgeräte-Analyse", fr: "Analyse des appareils réseau", pt: "Análise de dispositivos de rede", it: "Analisi dispositivi di rete", ru: "Анализ сетевых устройств", zh: "网络设备分析", ja: "ネットワークデバイス分析" },
-    "Ağ Cihazları Analizi": { en: "Network Device Analysis", tr: "Ağ Cihazları Analizi", es: "Análisis de dispositivos de red", de: "Netzwerkgeräte-Analyse", fr: "Analyse des appareils réseau", pt: "Análise de dispositivos de rede", it: "Analisi dispositivi di rete", ru: "Анализ сетевых устройств", zh: "网络设备分析", ja: "ネットワークデバイス分析" },
-    
-    "Precise Location (GPS)": { en: "Precise Location (GPS)", tr: "Hassas Konum (GPS)", es: "Ubicación precisa (GPS)", de: "Präziser Standort (GPS)", fr: "Localisation précise (GPS)", pt: "Localização precisa (GPS)", it: "Posizione precisa (GPS)", ru: "Точная геолокация (GPS)", zh: "精确位置(GPS)", ja: "正確な位置情報 (GPS)" },
-    "Hassas Konum (GPS)": { en: "Precise Location (GPS)", tr: "Hassas Konum (GPS)", es: "Ubicación precisa (GPS)", de: "Präziser Standort (GPS)", fr: "Localisation précise (GPS)", pt: "Localização precisa (GPS)", it: "Posizione precisa (GPS)", ru: "Точная геолокация (GPS)", zh: "精确位置(GPS)", ja: "正確な位置情報 (GPS)" }
+    "Storage": { en: "Storage", tr: "Depolama", es: "Almacenamiento", de: "Speicher", fr: "Stockage", pt: "Armazenamento", it: "Archiviazione", ru: "Хранилище", zh: "存储", ja: "ストレージ" },
+    "Calendar": { en: "Calendar", tr: "Takvim", es: "Calendario", de: "Kalender", fr: "Calendrier", pt: "Calendário", it: "Calendario", ru: "Календарь", zh: "日历", ja: "カレンダー" },
+    "Background Sync": { en: "Background Sync", tr: "Arka Plan Senkronizasyonu", es: "Sincronización en segundo plano", de: "Hintergrund-Synchronisation", fr: "Synchronisation en arrière-plan", pt: "Sincronização em segundo plano", it: "Sincronizzazione in background", ru: "Фоновая синхронизация", zh: "后台同步", ja: "バックグラウンド同期" },
+    "Site Camera & Microphone": { en: "Site Camera & Microphone", tr: "Kamera/Mikrofon (Site Bazlı)", es: "Cámara y micrófono (sitio)", de: "Kamera/Mikrofon (Website)", fr: "Caméra & micro (site)", pt: "Câmera e microfone (site)", it: "Fotocamera e microfono (sito)", ru: "Камера и микрофон (сайты)", zh: "摄像头与麦克风(按网站)", ja: "カメラ・マイク (サイト別)" },
+    "Local Storage Access": { en: "Local Storage Access", tr: "Yerel Depolama", es: "Acceso al almacenamiento local", de: "Lokaler Speicherzugriff", fr: "Accès stockage local", pt: "Acesso ao armazenamento local", it: "Accesso all'archiviazione locale", ru: "Доступ к локальному хранилищу", zh: "本地存储访问", ja: "ローカルストレージアクセス" },
+    "Notifications": { en: "Notifications", tr: "Bildirimler", es: "Notificaciones", de: "Benachrichtigungen", fr: "Notifications", pt: "Notificações", it: "Notifiche", ru: "Уведомления", zh: "通知", ja: "通知" },
+    "Identity Verification Camera": { en: "Identity Verification Camera", tr: "Kamera (Belge Doğrulama)", es: "Cámara para verificación de identidad", de: "Kamera zur Identitätsprüfung", fr: "Caméra de vérification d'identité", pt: "Câmera de verificação de identidade", it: "Fotocamera verifica identità", ru: "Камера для проверки личности", zh: "身份验证摄像头", ja: "本人確認カメラ" },
+    "Bluetooth / Nearby Devices": { en: "Bluetooth / Nearby Devices", tr: "Bluetooth/Yakındaki Cihazlar", es: "Bluetooth y dispositivos cercanos", de: "Bluetooth & Geräte in der Nähe", fr: "Bluetooth & appareils à proximité", pt: "Bluetooth e dispositivos próximos", it: "Bluetooth e dispositivi vicini", ru: "Bluetooth и близлежащие устройства", zh: "蓝牙与附近设备", ja: "Bluetooth・周辺デバイス" },
+    "Microphone (Voice Search)": { en: "Microphone (Voice Search)", tr: "Mikrofon (Sesle Arama)", es: "Micrófono (Búsqueda por voz)", de: "Mikrofon (Sprachsuche)", fr: "Microphone (Recherche vocale)", pt: "Microfone (Pesquisa por voz)", it: "Microfono (Ricerca vocale)", ru: "Микрофон (Голосовой поиск)", zh: "麦克风(语音搜索)", ja: "マイク (音声検索)" },
+    "Storage / File Access": { en: "Storage / File Access", tr: "Depolama / Dosya Erişimi", es: "Almacenamiento y archivos", de: "Speicher- / Dateizugriff", fr: "Stockage / Fichiers", pt: "Armazenamento e arquivos", it: "Archiviazione / Accesso file", ru: "Хранилище / Доступ к файлам", zh: "存储/文件访问", ja: "ストレージ/ファイルアクセス" },
+    "Precise Location (GPS)": { en: "Precise Location (GPS)", tr: "Hassas Konum (GPS)", es: "Ubicación precisa (GPS)", de: "Präziser Standort (GPS)", fr: "Localisation précise (GPS)", pt: "Localização precisa (GPS)", it: "Posizione precisa (GPS)", ru: "Точная геолокация (GPS)", zh: "精确位置(GPS)", ja: "正確な位置情報 (GPS)" }
 };
 
 // ────────────────────────────────────────────────────────────────────────────────
-// UI Translations (i18n)
+// App-Specific Multi-Language Risks & Tips Dictionary
+// ────────────────────────────────────────────────────────────────────────────────
+const appRisksDict = {
+    whatsapp: {
+        en: [
+            "Cross-platform social graphing correlates your communication frequency and time windows.",
+            "Unencrypted cloud backups (Google Drive / iCloud) leave chat archives vulnerable to legal or data leaks."
+        ],
+        tr: [
+            "Çapraz platform sosyal grafiği, iletişim sıklığınızı ve zaman aralıklarınızı Meta sunucularında haritalar.",
+            "Şifrelenmemiş bulut yedeklemeleri (Google Drive / iCloud) sohbet arşivlerinizi yasal veya veri sızıntılarına açık bırakır."
+        ],
+        es: [
+            "El gráfico social analiza la frecuencia y los horarios de comunicación en los servidores de Meta.",
+            "Las copias de seguridad en la nube no encriptadas dejan los archivos de chat expuestos."
+        ],
+        de: [
+            "Der plattformübergreifende soziale Graph erfasst Kommunikationshäufigkeit und Uhrzeiten auf Meta-Servern.",
+            "Unverschlüsselte Cloud-Backups machen Chat-Archive anfällig für Datenlecks."
+        ],
+        fr: [
+            "Le graphe social croisé analyse la fréquence et les heures de communication sur les serveurs Meta.",
+            "Les sauvegardes cloud non chiffrées laissent les archives de chat exposées aux fuites de données."
+        ],
+        pt: [
+            "O gráfico social cruza a frequência e horários de comunicação nos servidores da Meta.",
+            "Backups na nuvem não criptografados deixam os arquivos de conversa vulneráveis a vazamentos."
+        ],
+        it: [
+            "Il grafo sociale incrocia la frequenza e gli orari delle comunicazioni sui server Meta.",
+            "I backup cloud non crittografati lasciano gli archivi chat vulnerabili a fughe di dati."
+        ],
+        ru: [
+            "Социальный граф анализирует частоту и время ваших контактов на серверах Meta.",
+            "Незашифрованные резервные копии в облаке подвергают архивы чатов риску утечки."
+        ],
+        zh: [
+            "跨平台社交图谱在 Meta 服务器上记录您的通信频率与时间段。",
+            "未加密的云端备份 (Google Drive / iCloud) 会使聊天记录面临泄露风险。"
+        ],
+        ja: [
+            "クロスプラットフォームのソーシャルグラフがMetaサーバー上で連絡頻度と時間帯を解析します。",
+            "暗号化されていないクラウドバックアップはチャット履歴のデータ漏洩リスクを伴います。"
+        ]
+    },
+    instagram: {
+        en: [
+            "Dwell time & interest profiling tracks exactly how many seconds you pause on every post and story.",
+            "Facial biometrics & camera usage are processed for algorithmic recommendations and targeted ads."
+        ],
+        tr: [
+            "Tıklama ve duraklama süresi analizi, her gönderide kaç saniye durduğunuzu anlık olarak kaydeder.",
+            "Yüz biyometrisi ve kamera kullanımı algoritmik öneriler ve hedefli reklamlar için işlenir."
+        ],
+        es: [
+            "El perfilado de interacción rastrea cuántos segundos se detiene en cada publicación y historia.",
+            "La biometría facial se procesa para recomendaciones algorítmicas y anuncios dirigidos."
+        ],
+        de: [
+            "Verweildauer-Profiling erfasst genau, wie viele Sekunden Sie bei jedem Beitrag verweilen.",
+            "Gesichtsbiometrie wird für algorithmische Empfehlungen und zielgerichtete Werbung verarbeitet."
+        ],
+        fr: [
+            "Le profilage du temps de visionnage enregistre les secondes passées sur chaque publication et story.",
+            "La biométrie faciale est traitée pour les recommandations algorithmiques et les publicités ciblées."
+        ],
+        pt: [
+            "O perfilamento de tempo de permanência rastreia quantos segundos você para em cada publicação.",
+            "A biometria facial é processada para recomendações algorítmicas e anúncios direcionados."
+        ],
+        it: [
+            "Il profiling del tempo di permanenza registra quanti secondi ti fermi su ogni post e storia.",
+            "La biometria facciale viene elaborata per raccomandazioni algoritmiche e annunci mirati."
+        ],
+        ru: [
+            "Анализ времени просмотра фиксирует, сколько секунд вы задерживаетесь на каждом посте.",
+            "Биометрия лица используется для алгоритмических рекомендаций и таргетированной рекламы."
+        ],
+        zh: [
+            "停留时间分析会精确记录您在每个帖子和动态上停留的秒数。",
+            "人脸生物特征用于算法推荐与定向广告投放。"
+        ],
+        ja: [
+            "滞在時間プロファイリングにより、各投稿やストーリーズで何秒停止したかが記録されます。",
+            "顔生体認証データはアルゴリズムによるおすすめ表示やターゲティング広告に処理されます。"
+        ]
+    },
+    tiktok: {
+        en: [
+            "Aggressive interaction harvesting tracks keystroke dynamics, device metrics, and clipboard contents.",
+            "Deep media biometric extraction processes facial and voice patterns from all uploaded clips."
+        ],
+        tr: [
+            "Aşırı veri iştahı; tuş vuruş ritminizi, cihaz metriklerini ve pano içeriklerini izler.",
+            "Derin medya biyometrisi çekimi; yüklenen tüm içeriklerden yüz ve ses kalıplarını işler."
+        ],
+        es: [
+            "La recopilación agresiva rastrea la dinámica de tecleo, métricas de dispositivo y portapapeles.",
+            "La extracción biométrica procesa patrones faciales y de voz de todos los videos subidos."
+        ],
+        de: [
+            "Aggressive Datenerfassung erfasst Tastenanschlag-Dynamik, Gerätemetriken und Zwischenablage.",
+            "Tiefe biometrische Extraktion verarbeitet Gesichts- und Sprachmuster aus allen hochgeladenen Clips."
+        ],
+        fr: [
+            "La collecte de données suit la dynamique de frappe, les métriques d'appareil et le presse-papiers.",
+            "L'extraction biométrique traite les caractéristiques faciales et vocales des vidéos téléversées."
+        ],
+        pt: [
+            "A coleta agressiva rastreia a dinâmica de digitação, métricas de dispositivo e área de transferência.",
+            "A extração biométrica processa padrões faciais e vocais de todos os vídeos enviados."
+        ],
+        it: [
+            "La raccolta dati traccia la dinamica di digitazione, le metriche del dispositivo e gli appunti.",
+            "L'estrazione biometrica elabora i tratti facciali e vocali di tutti i video caricati."
+        ],
+        ru: [
+            "Агрессивный сбор данных отслеживает динамику клавиш, метрики устройства и буфер обмена.",
+            "Глубокая биометрия обрабатывает черты лица и голос из всех загруженных видеоклипов."
+        ],
+        zh: [
+            "激进的数据采集会追踪按键动态特征、设备指标和剪贴板内容。",
+            "深度媒体生物特征提取会处理所有上传视频中的人脸与语音模式。"
+        ],
+        ja: [
+            "アグレッシブなデータ収集により、キーストローク、デバイス情報、クリップボードの内容が追跡されます。",
+            "アップロードされた全動画から顔および音声の生体認証パターンが抽出・処理されます。"
+        ]
+    },
+    gmail: {
+        en: [
+            "Centralized financial and administrative identity aggregator (invoices, receipts, bookings).",
+            "Automated content scanning parses email texts for spam filtering and AI assistant features."
+        ],
+        tr: [
+            "Merkezi finansal ve idari veri kümelenmesi (banka, fatura, rezervasyonlar e-postada birikir).",
+            "Otomatik içerik tarayıcıları e-posta metinlerini spam koruması ve yapay zeka özellikleri için işler."
+        ],
+        es: [
+            "Agregador centralizado de identidad financiera y administrativa (facturas, reservas).",
+            "El escaneo automático analiza los correos para filtrado de spam y funciones de IA."
+        ],
+        de: [
+            "Zentraler Aggregator für finanzielle und administrative Daten (Rechnungen, Buchungen).",
+            "Automatisches Inhaltsscanning analysiert E-Mail-Texte für Spamfilter und KI-Funktionen."
+        ],
+        fr: [
+            "Agrégateur centralisé d'identités financières et administratives (factures, réservations).",
+            "Le balayage automatique analyse les e-mails pour le filtrage anti-spam et les fonctions IA."
+        ],
+        pt: [
+            "Agregador centralizado de dados financeiros e administrativos (faturas, reservas).",
+            "A verificação automática analisa os e-mails para filtragem de spam e recursos de IA."
+        ],
+        it: [
+            "Aggregatore centralizzato di dati finanziari e amministrativi (fatture, prenotazioni).",
+            "La scansione automatica analizza le e-mail per il filtraggio antispam e le funzioni IA."
+        ],
+        ru: [
+            "Централизованный агрегатор финансовых и административных данных (счета, брони).",
+            "Автоматический сканер анализирует тексты писем для спам-фильтрации и ИИ-функций."
+        ],
+        zh: [
+            "集中式财务与行政身份数据池（发票、账单、预订均在邮件中汇总）。",
+            "自动内容扫描会解析邮件文本以用于垃圾邮件过滤与 AI 助手功能。"
+        ],
+        ja: [
+            "一元化された財務・行政データアグリゲーター (請求書、レシート、予約がメールに蓄積)。",
+            "自動コンテンツスキャンにより、スパム対策やAI機能のためにメール本文が解析されます。"
+        ]
+    },
+    chrome: {
+        en: [
+            "Full-spectrum web navigation profiling captures every URL, click, and search query.",
+            "Hardware fingerprinting uniquely identifies your device across third-party ad networks."
+        ],
+        tr: [
+            "Tüm web gezinti profillemesi; girdiğiniz her URL'yi, tıklamayı ve aramayı kaydeder.",
+            "Donanım parmak izi (Browser Fingerprinting) çerezler silinse bile cihazınızı tekil olarak tanır."
+        ],
+        es: [
+            "El perfilado completo de navegación registra cada URL, clic y búsqueda realizada.",
+            "La huella digital de hardware identifica de forma única su dispositivo entre redes de anuncios."
+        ],
+        de: [
+            "Vollständiges Web-Navigations-Profiling erfasst jede URL, jeden Klick und jede Suche.",
+            "Hardware-Fingerprinting identifiziert Ihr Gerät eindeutig über Werbenetzwerke hinweg."
+        ],
+        fr: [
+            "Le profilage complet de navigation enregistre chaque URL, clic et recherche effectuée.",
+            "L'empreinte matérielle identifie de façon unique votre appareil sur les réseaux publicitaires."
+        ],
+        pt: [
+            "O perfilamento completo de navegação registra cada URL, clique e pesquisa realizada.",
+            "A impressão digital de hardware identifica exclusivamente seu dispositivo em redes de anúncios."
+        ],
+        it: [
+            "Il profiling completo della navigazione registra ogni URL, clic e ricerca effettuata.",
+            "L'impronta hardware identifica in modo univoco il tuo dispositivo nelle reti pubblicitarie."
+        ],
+        ru: [
+            "Полный профиль веб-навигации фиксирует каждый URL-адрес, клик и поисковый запрос.",
+            "Аппаратный отпечаток уникально идентифицирует ваше устройство в рекламных сетях."
+        ],
+        zh: [
+            "全谱系网页浏览分析会记录您访问的每个 URL、点击和搜索查询。",
+            "硬件指纹提取即使在清除 Cookie 后也能在第三方广告网络中唯一标识您的设备。"
+        ],
+        ja: [
+            "フルスペックのWeb閲覧プロファイリングにより、訪問したすべてのURL、クリック、検索が記録されます。",
+            "ハードウェアフィンガープリントにより、クッキーを削除してもデバイスが特定されます。"
+        ]
+    }
+};
+
+const appTipsDict = {
+    whatsapp: {
+        en: ["Enable 'End-to-End Encrypted Cloud Backup' inside WhatsApp settings."],
+        tr: ["WhatsApp ayarlarından 'Uçtan Uca Şifreli Bulut Yedeklemesi' özelliğini açın."],
+        es: ["Active 'Copia de seguridad cifrada de extremo a extremo' en la configuración."],
+        de: ["Aktivieren Sie 'Ende-zu-Ende-verschlüsseltes Cloud-Backup' in den Einstellungen."],
+        fr: ["Activez la 'Sauvegarde cloud chiffrée de bout en bout' dans les paramètres."],
+        pt: ["Ative o 'Backup na nuvem criptografado de ponta a ponta' nas configurações."],
+        it: ["Attiva il 'Backup cloud crittografato end-to-end' nelle impostazioni di WhatsApp."],
+        ru: ["Включите 'Сквозное шифрование резервных копий' в настройках WhatsApp."],
+        zh: ["请在 WhatsApp 设置中开启“端到端加密云备份”。"],
+        ja: ["WhatsAppの設定で「エンドツーエンド暗号化クラウドバックアップ」を有効にしてください。"]
+    },
+    instagram: {
+        en: ["Disable 'Precise Location' access and restrict cross-site ad matching."],
+        tr: ["'Hassas Konum' erişimini kapatın ve site dışı reklam eşleştirmelerini kısıtlayın."],
+        es: ["Desactive el acceso a 'Ubicación precisa' y restrinja el rastreo entre sitios."],
+        de: ["Deaktivieren Sie den Zugriff auf 'Präzisen Standort' und beschränken Sie Werbetracking."],
+        fr: ["Désactivez l'accès à la 'Localisation précise' et limitez le ciblage publicitaire."],
+        pt: ["Desative o acesso à 'Localização precisa' e restrinja o rastreamento de anúncios."],
+        it: ["Disattiva l'accesso alla 'Posizione precisa' e limita il tracciamento pubblicitario."],
+        ru: ["Отключите доступ к 'Точной геолокации' и ограничьте межсайтовый трекинг."],
+        zh: ["请关闭“精确位置”权限，并限制跨站广告匹配。"],
+        ja: ["「正確な位置情報」アクセスを無効にし、サイト間の広告追跡を制限してください。"]
+    },
+    tiktok: {
+        en: ["Use TikTok via a mobile browser (sandboxed) and revoke Contacts & Clipboard access."],
+        tr: ["Uygulamayı mobil tarayıcı (Sandboxed) üzerinden kullanın, Rehber ve Pano izinlerini kapatın."],
+        es: ["Use TikTok mediante un navegador móvil y revoque los permisos de contactos y portapapeles."],
+        de: ["Nutzen Sie TikTok im Mobilbrowser und widerrufen Sie Kontakte- und Zwischenablage-Zugriff."],
+        fr: ["Utilisez TikTok via un navigateur web et révoquez les accès aux contacts et presse-papiers."],
+        pt: ["Use o TikTok via navegador móvel e revogue as permissões de contatos e área de transferência."],
+        it: ["Usa TikTok tramite browser mobile e revoca i permessi per contatti e appunti."],
+        ru: ["Используйте TikTok через браузер и отключите доступ к контактам и буферу обмена."],
+        zh: ["建议通过移动端浏览器 (沙盒) 使用 TikTok，并撤销通讯录与剪贴板权限。"],
+        ja: ["TikTokはブラウザ上で使用し、連絡先およびクリップボードへのアクセス権限を無効化してください。"]
+    },
+    gmail: {
+        en: ["Enable 2-Factor Authentication (2FA) with a Security Key or Authenticator app."],
+        tr: ["Gmail hesabınızda Güvenlik Anahtarı veya Authenticator ile 2 Adımlı Doğrulama (2FA) açın."],
+        es: ["Active la autenticación de dos factores (2FA) con una clave de seguridad o app de autenticación."],
+        de: ["Aktivieren Sie die Zwei-Faktor-Authentifizierung (2FA) mit einem Sicherheitsschlüssel."],
+        fr: ["Activez l'authentification à deux facteurs (2FA) avec une clé de sécurité ou application."],
+        pt: ["Ative a autenticação de dois fatores (2FA) com uma chave de segurança ou aplicativo."],
+        it: ["Attiva l'autenticazione a due fattori (2FA) con una chiave di sicurezza o app authenticator."],
+        ru: ["Включите двухфакторную аутентификацию (2FA) с помощью приложения-аутентификатора."],
+        zh: ["请使用安全密钥或身份验证器应用开启双重身份验证 (2FA)。"],
+        ja: ["セキュリティキーまたは認証アプリを使用して2段階認証 (2FA) を有効にしてください。"]
+    },
+    chrome: {
+        en: ["Switch to a privacy-first browser (Brave, Firefox) and install uBlock Origin."],
+        tr: ["Gizlilik odaklı bir tarayıcıya (Brave, Firefox) geçin ve uBlock Origin eklentisini kullanın."],
+        es: ["Cambie a un navegador enfocado en privacidad (Brave, Firefox) e instale uBlock Origin."],
+        de: ["Wechseln Sie zu einem datenschutzfreundlichen Browser (Brave, Firefox) mit uBlock Origin."],
+        fr: ["Passez à un navigateur respectueux de la vie privée (Brave, Firefox) avec uBlock Origin."],
+        pt: ["Mude para um navegador focado em privacidade (Brave, Firefox) e instale o uBlock Origin."],
+        it: ["Passa a un browser incentrato sulla privacy (Brave, Firefox) e installa uBlock Origin."],
+        ru: ["Перейдите на браузер с акцентом на конфиденциальность (Brave, Firefox) и uBlock Origin."],
+        zh: ["建议改用注重隐私的浏览器 (Brave、Firefox) 并安装 uBlock Origin 插件。"],
+        ja: ["プライバシー重視のブラウザ (Brave, Firefox) に切り替え、uBlock Originを導入してください。"]
+    }
+};
+
+// ────────────────────────────────────────────────────────────────────────────────
+// UI Strings (i18n)
 // ────────────────────────────────────────────────────────────────────────────────
 const i18n = {
     en: {
-        brandSubtitle: "Surveillance Index",
-        heroTitle: "Personal Surveillance Matrix",
+        brandSubtitle: "Surveillance Index", heroTitle: "Personal Surveillance Matrix",
         heroDesc: "Analyze data harvesting, permission matrices, and unified surveillance risk profiles across your daily mobile and web applications.",
         searchPlaceholder: "Search or add any app (e.g., Discord, Zoom, Getir)...",
-        btnSearchStore: "Search Store",
-        btnAddCustom: "Add Custom",
+        btnSearchStore: "Search Store", btnAddCustom: "Add Custom",
         catAll: "All", catSocial: "Social", catCommunication: "Communication", catProductivity: "Productivity", catEntertainment: "Entertainment",
-        section1Title: "Select or Add Applications",
-        section1Subtitle: "Click badges to inspect privacy policies",
-        section2Title: "Surveillance Summary",
-        scoreLabel: "Unified Surveillance Index (0-100)",
-        scoreNone: "No App Selected",
-        scoreCritical: "CRITICAL SURVEILLANCE RISK",
-        scoreWarning: "HIGH SURVEILLANCE RISK",
-        scoreSafe: "MODERATE / CONTROLLED",
+        section1Title: "Select or Add Applications", section1Subtitle: "Click badges to inspect privacy policies",
+        section2Title: "Surveillance Summary", scoreLabel: "Unified Surveillance Index (0-100)",
+        scoreNone: "No App Selected", scoreCritical: "CRITICAL SURVEILLANCE RISK", scoreWarning: "HIGH SURVEILLANCE RISK", scoreSafe: "MODERATE / CONTROLLED",
         section3Title: "Detailed Threat & Permission Analysis",
-        dataTypesTitle: "📊 Harvested Data Types",
-        sharedWithTitle: "🔗 Third-Party Destinations",
-        permissionsTitle: "🔐 Requested Device Permissions",
-        risksTitle: "⚠️ Surveillance Threat Scenarios",
-        tipsTitle: "🛡️ Privacy Hardening Blueprint",
+        dataTypesTitle: "📊 Harvested Data Types", sharedWithTitle: "🔗 Third-Party Destinations", permissionsTitle: "🔐 Requested Device Permissions",
+        risksTitle: "⚠️ Surveillance Threat Scenarios", tipsTitle: "🛡️ Privacy Hardening Blueprint",
         noAppSelected: "Select applications above to generate analysis.",
         radarLabels: ["Identity & Biometrics", "Behavior & Location", "Content & Messages", "Social Graph"],
         radarDatasetLabel: "Data Appetite Score (0-10)",
-        modalStoreTitle: "Store Search Results",
-        modalCustomTitle: "Add Custom Application",
-        verifiedBadge: "✓ Verified",
-        trackersLabel: "Trackers",
-        customFormName: "Application Name:",
-        customFormCompany: "Developer / Company:",
-        customFormCategory: "Category:",
-        btnCancel: "Cancel",
-        btnAdd: "Add & Analyze",
-        riskSocialGraph: "Cross-platform social graphing correlates your communication frequency and time windows across apps.",
-        riskBiometrics: "Facial and media biometric data processed for algorithmic recommendations and filtering.",
-        riskLocation: "Location tracking builds persistent physical travel and dwelling patterns.",
-        riskKeyboard: "Keystroke dynamics and clipboard access enable behavioral profiling beyond visible interactions.",
-        tipPermissions: "Revoke sensitive permissions (Location, Contacts, Camera) when not actively using the app.",
-        tipEncryptedBackup: "Enable end-to-end encrypted cloud backups for chat messaging applications.",
-        tipAdIdReset: "Reset your Mobile Advertising ID (IDFA / AAID) regularly in system privacy settings.",
-        tipSandbox: "Use the web version or sandbox the app to limit device-level data access."
+        modalStoreTitle: "Store Search Results", modalCustomTitle: "Add Custom Application",
+        verifiedBadge: "✓ Verified", trackersLabel: "Trackers",
+        customFormName: "Application Name:", customFormCompany: "Developer / Company:", customFormCategory: "Category:",
+        btnCancel: "Cancel", btnAdd: "Add & Analyze"
     },
     tr: {
-        brandSubtitle: "Gözetim Endeksi",
-        heroTitle: "Kişisel Gözetim Profili Analizi",
+        brandSubtitle: "Gözetim Endeksi", heroTitle: "Kişisel Gözetim Profili Analizi",
         heroDesc: "Günlük yaşamda kullandığınız uygulamaların veri toplama, izin matrisi ve tümleşik gözetim altındaki risk profilini anında görün.",
         searchPlaceholder: "Uygulama veya şirket ara (ör. Mopaş, Getir, Discord, Zoom)...",
-        btnSearchStore: "Mağazada Ara",
-        btnAddCustom: "Özel Ekle",
+        btnSearchStore: "Mağazada Ara", btnAddCustom: "Özel Ekle",
         catAll: "Tümü", catSocial: "Sosyal", catCommunication: "İletişim", catProductivity: "Verimlilik", catEntertainment: "Eğlence",
-        section1Title: "Uygulamaları Seçin veya Ekleyin",
-        section1Subtitle: "Gizlilik derecelerini görmek için rozetlere tıklayın",
-        section2Title: "Gözetim Profili Özeti",
-        scoreLabel: "Tümleşik Gözetim Endeksi (0-100)",
-        scoreNone: "Uygulama Seçilmedi",
-        scoreCritical: "KRİTİK GÖZETİM DÜZEYİ",
-        scoreWarning: "YÜKSEK GÖZETİM DÜZEYİ",
-        scoreSafe: "ORTA / KONTROLLÜ DÜZEY",
+        section1Title: "Uygulamaları Seçin veya Ekleyin", section1Subtitle: "Gizlilik derecelerini görmek için rozetlere tıklayın",
+        section2Title: "Gözetim Profili Özeti", scoreLabel: "Tümleşik Gözetim Endeksi (0-100)",
+        scoreNone: "Uygulama Seçilmedi", scoreCritical: "KRİTİK GÖZETİM DÜZEYİ", scoreWarning: "YÜKSEK GÖZETİM DÜZEYİ", scoreSafe: "ORTA / KONTROLLÜ DÜZEY",
         section3Title: "Detaylı Veri & Risk Analizi",
-        dataTypesTitle: "📊 Toplanan Veri Türleri",
-        sharedWithTitle: "🔗 Kimlerle Paylaşılıyor?",
-        permissionsTitle: "🔐 Kullanılan İzinler",
-        risksTitle: "⚠️ Potansiyel Tehdit Senaryoları",
-        tipsTitle: "🛡️ Gizlilik Sertleştirme İpuçları",
+        dataTypesTitle: "📊 Toplanan Veri Türleri", sharedWithTitle: "🔗 Kimlerle Paylaşılıyor?", permissionsTitle: "🔐 Kullanılan İzinler",
+        risksTitle: "⚠️ Potansiyel Tehdit Senaryoları", tipsTitle: "🛡️ Gizlilik Sertleştirme İpuçları",
         noAppSelected: "Analiz oluşturmak için yukarıdan uygulama seçin.",
         radarLabels: ["Kimlik & Biyometri", "Davranış & Konum", "İçerik & Mesajlar", "Sosyal Grafik"],
         radarDatasetLabel: "Veri İştahı Skoru (0-10)",
-        modalStoreTitle: "Mağaza Arama Sonuçları",
-        modalCustomTitle: "Özel Uygulama Ekle",
-        verifiedBadge: "✓ Doğrulanmış",
-        trackersLabel: "İzleyici",
-        customFormName: "Uygulama Adı:",
-        customFormCompany: "Geliştirici / Şirket:",
-        customFormCategory: "Kategori:",
-        btnCancel: "İptal",
-        btnAdd: "Ekle & Analiz Et",
-        riskSocialGraph: "Çapraz platform sosyal grafiği, iletişim sıklığınızı ve zaman aralıklarınızı işler.",
-        riskBiometrics: "Yüz ve medya biyometrik verileri algoritmik öneriler için işlenir.",
-        riskLocation: "Konum takibi sürekli fiziksel seyahat ve konaklama kalıpları oluşturur.",
-        riskKeyboard: "Tuş vuruş dinamiği ve pano erişimi, görünür etkileşimlerin ötesinde davranışsal profil oluşturur.",
-        tipPermissions: "Uygulamayı kullanmadığınızda hassas izinleri (Konum, Kişiler, Kamera) kapatın.",
-        tipEncryptedBackup: "Mesajlaşma uygulamalarında uçtan uca şifreli bulut yedeklemesini etkinleştirin.",
-        tipAdIdReset: "Sistem gizlilik ayarlarından Reklam Kimliğinizi (IDFA / AAID) düzenli sıfırlayın.",
-        tipSandbox: "Cihaz düzeyinde veri erişimini sınırlamak için uygulamanın web sürümünü kullanın."
+        modalStoreTitle: "Mağaza Arama Sonuçları", modalCustomTitle: "Özel Uygulama Ekle",
+        verifiedBadge: "✓ Doğrulanmış", trackersLabel: "İzleyici",
+        customFormName: "Uygulama Adı:", customFormCompany: "Geliştirici / Şirket:", customFormCategory: "Kategori:",
+        btnCancel: "İptal", btnAdd: "Ekle & Analiz Et"
     },
     es: {
         brandSubtitle: "Índice de Vigilancia", heroTitle: "Matriz de Vigilancia Personal",
@@ -374,15 +478,7 @@ const i18n = {
         modalStoreTitle: "Resultados de la tienda", modalCustomTitle: "Agregar app personalizada",
         verifiedBadge: "✓ Verificado", trackersLabel: "Rastreadores",
         customFormName: "Nombre:", customFormCompany: "Desarrollador:", customFormCategory: "Categoría:",
-        btnCancel: "Cancelar", btnAdd: "Agregar y analizar",
-        riskSocialGraph: "El gráfico social analiza su frecuencia de comunicación en diferentes plataformas.",
-        riskBiometrics: "Los datos biométricos faciales se procesan para recomendaciones algorítmicas.",
-        riskLocation: "El rastreo de ubicación crea patrones continuos de desplazamiento físico.",
-        riskKeyboard: "La dinámica de tecleo y el acceso al portapapeles permiten el perfilado conductual.",
-        tipPermissions: "Revoque permisos sensibles cuando no use la app.",
-        tipEncryptedBackup: "Active copias de seguridad encriptadas de extremo a extremo.",
-        tipAdIdReset: "Restablezca periódicamente su ID de publicidad móvil.",
-        tipSandbox: "Use la versión web para limitar el acceso a datos del dispositivo."
+        btnCancel: "Cancelar", btnAdd: "Agregar y analizar"
     },
     de: {
         brandSubtitle: "Überwachungsindex", heroTitle: "Überwachungsmatrix für persönliche Daten",
@@ -400,15 +496,7 @@ const i18n = {
         modalStoreTitle: "Store-Suchergebnisse", modalCustomTitle: "Eigene App hinzufügen",
         verifiedBadge: "✓ Verifiziert", trackersLabel: "Tracker",
         customFormName: "App-Name:", customFormCompany: "Entwickler:", customFormCategory: "Kategorie:",
-        btnCancel: "Abbrechen", btnAdd: "Hinzufügen & Analysieren",
-        riskSocialGraph: "Der plattformübergreifende soziale Graph verarbeitet Ihre Kommunikationshäufigkeit.",
-        riskBiometrics: "Gesichtsbiometrische Daten werden für algorithmische Empfehlungen verarbeitet.",
-        riskLocation: "Standortverfolgung erstellt kontinuierliche physische Bewegungsprofile.",
-        riskKeyboard: "Tastenanschlag-Dynamik und Zwischenablage-Zugriff ermöglichen Verhaltensprofilerstellung.",
-        tipPermissions: "Widerrufen Sie empfindliche Berechtigungen bei Nichtgebrauch.",
-        tipEncryptedBackup: "Aktivieren Sie Ende-zu-Ende-verschlüsselte Cloud-Backups.",
-        tipAdIdReset: "Setzen Sie Ihre Werbe-ID regelmäßig zurück.",
-        tipSandbox: "Nutzen Sie die Web-Version, um Gerätedatenzugriff zu beschränken."
+        btnCancel: "Abbrechen", btnAdd: "Hinzufügen & Analysieren"
     },
     fr: {
         brandSubtitle: "Indice de surveillance", heroTitle: "Matrice de Surveillance Personnelle",
@@ -427,15 +515,7 @@ const i18n = {
         modalStoreTitle: "Résultats du Store", modalCustomTitle: "Ajouter une application",
         verifiedBadge: "✓ Vérifié", trackersLabel: "Traqueurs",
         customFormName: "Nom :", customFormCompany: "Développeur :", customFormCategory: "Catégorie :",
-        btnCancel: "Annuler", btnAdd: "Ajouter et analyser",
-        riskSocialGraph: "Le graphe social croisé analyse la fréquence de vos communications.",
-        riskBiometrics: "Les données biométriques faciales sont traitées pour les recommandations.",
-        riskLocation: "Le suivi de localisation établit des modèles de déplacement physique.",
-        riskKeyboard: "La dynamique de frappe et l'accès au presse-papiers permettent le profilage comportemental.",
-        tipPermissions: "Révoguez les autorisations sensibles lorsque vous n'utilisez pas l'application.",
-        tipEncryptedBackup: "Activez les sauvegardes cloud chiffrées de bout en bout.",
-        tipAdIdReset: "Réinitialisez régulièrement votre identifiant publicitaire.",
-        tipSandbox: "Utilisez la version web pour limiter l'accès aux données de l'appareil."
+        btnCancel: "Annuler", btnAdd: "Ajouter et analyser"
     },
     pt: {
         brandSubtitle: "Índice de Vigilância", heroTitle: "Matriz de Vigilância Pessoal",
@@ -454,15 +534,7 @@ const i18n = {
         modalStoreTitle: "Resultados da Loja", modalCustomTitle: "Adicionar app personalizado",
         verifiedBadge: "✓ Verificado", trackersLabel: "Rastreadores",
         customFormName: "Nome:", customFormCompany: "Desenvolvedor:", customFormCategory: "Categoria:",
-        btnCancel: "Cancelar", btnAdd: "Adicionar e analisar",
-        riskSocialGraph: "O gráfico social analisa sua frequência de comunicação entre plataformas.",
-        riskBiometrics: "Dados biométricos faciais são processados para recomendações.",
-        riskLocation: "O rastreamento de localização gera padrões contínuos de deslocamento.",
-        riskKeyboard: "Dinâmica de digitação e acesso à área de transferência permitem perfilamento comportamental.",
-        tipPermissions: "Revogue permissões sensíveis quando não estiver usando o app.",
-        tipEncryptedBackup: "Ative backups criptografados de ponta a ponta.",
-        tipAdIdReset: "Redefina seu ID de publicidade regularmente.",
-        tipSandbox: "Use a versão web para limitar o acesso a dados do dispositivo."
+        btnCancel: "Cancelar", btnAdd: "Adicionar e analisar"
     },
     it: {
         brandSubtitle: "Indice di Sorveglianza", heroTitle: "Matrice di Sorveglianza Personale",
@@ -481,15 +553,7 @@ const i18n = {
         modalStoreTitle: "Risultati dello Store", modalCustomTitle: "Aggiungi app personalizzata",
         verifiedBadge: "✓ Verificato", trackersLabel: "Tracker",
         customFormName: "Nome:", customFormCompany: "Sviluppatore:", customFormCategory: "Categoria:",
-        btnCancel: "Annulla", btnAdd: "Aggiungi e analizza",
-        riskSocialGraph: "Il grafo sociale analizza la frequenza delle tue comunicazioni.",
-        riskBiometrics: "I dati biometrici facciali vengono elaborati per le raccomandazioni.",
-        riskLocation: "Il tracciamento della posizione crea modelli di spostamento continui.",
-        riskKeyboard: "La dinamica della digitazione e l'accesso agli appunti consentono il profiling comportamentale.",
-        tipPermissions: "Revoca le autorizzazioni sensibili quando non usi l'app.",
-        tipEncryptedBackup: "Attiva i backup cloud crittografati end-to-end.",
-        tipAdIdReset: "Reimposta regolarmente l'ID pubblicitario.",
-        tipSandbox: "Usa la versione web per limitare l'accesso ai dati del dispositivo."
+        btnCancel: "Annulla", btnAdd: "Aggiungi e analizza"
     },
     ru: {
         brandSubtitle: "Индекс слежки", heroTitle: "Матрица личной цифровой слежки",
@@ -508,15 +572,7 @@ const i18n = {
         modalStoreTitle: "Результаты поиска", modalCustomTitle: "Добавить приложение",
         verifiedBadge: "✓ Подтверждено", trackersLabel: "Трекеры",
         customFormName: "Название:", customFormCompany: "Разработчик:", customFormCategory: "Категория:",
-        btnCancel: "Отмена", btnAdd: "Добавить и проанализировать",
-        riskSocialGraph: "Социальный граф анализирует частоту и время ваших контактов.",
-        riskBiometrics: "Биометрические данные лица обрабатываются для алгоритмов.",
-        riskLocation: "Отслеживание локации формирует постоянные маршруты перемещений.",
-        riskKeyboard: "Динамика нажатия клавиш и доступ к буферу обмена позволяют создавать поведенческие профили.",
-        tipPermissions: "Отзывайте разрешения на доступ к геолокации и камере.",
-        tipEncryptedBackup: "Включайте сквозное шифрование резервных копий.",
-        tipAdIdReset: "Регулярно сбрасывайте рекламный идентификатор.",
-        tipSandbox: "Используйте веб-версию для ограничения доступа к данным устройства."
+        btnCancel: "Отмена", btnAdd: "Добавить и проанализировать"
     },
     zh: {
         brandSubtitle: "监控数据指数", heroTitle: "个人监控数据矩阵",
@@ -535,15 +591,7 @@ const i18n = {
         modalStoreTitle: "商店搜索结果", modalCustomTitle: "添加自定义应用",
         verifiedBadge: "✓ 已验证", trackersLabel: "追踪器",
         customFormName: "应用名称:", customFormCompany: "开发者:", customFormCategory: "分类:",
-        btnCancel: "取消", btnAdd: "添加并分析",
-        riskSocialGraph: "跨平台社交图谱分析您的通信频率与时间特征。",
-        riskBiometrics: "人脸生物识别数据用于算法推荐与过滤。",
-        riskLocation: "位置跟踪会生成持续的物理活动与停留轨迹。",
-        riskKeyboard: "按键动态和剪贴板访问支持超越可见交互的行为分析。",
-        tipPermissions: "闲置应用时请关闭位置、通讯录和摄像头权限。",
-        tipEncryptedBackup: "开启聊天应用的端到端加密云备份。",
-        tipAdIdReset: "定期重置移动广告标识符。",
-        tipSandbox: "使用网页版以限制设备级数据访问。"
+        btnCancel: "取消", btnAdd: "添加并分析"
     },
     ja: {
         brandSubtitle: "監視インデックス", heroTitle: "個人監視リスクマトリックス",
@@ -562,20 +610,12 @@ const i18n = {
         modalStoreTitle: "ストア検索結果", modalCustomTitle: "カスタムアプリの追加",
         verifiedBadge: "✓ 検証済み", trackersLabel: "トラッカー",
         customFormName: "アプリ名:", customFormCompany: "開発者:", customFormCategory: "カテゴリー:",
-        btnCancel: "キャンセル", btnAdd: "追加して分析",
-        riskSocialGraph: "クロスプラットフォーム・ソーシャルグラフにより連絡頻度が解析されます。",
-        riskBiometrics: "顔生体認証データはアルゴリズム推薦に利用されます。",
-        riskLocation: "位置情報追跡により移動履歴と滞在パターンが生成されます。",
-        riskKeyboard: "キーストローク・ダイナミクスとクリップボードアクセスにより行動プロファイリングが可能になります。",
-        tipPermissions: "アプリ非使用時は位置情報やカメラなどの権限を無効化してください。",
-        tipEncryptedBackup: "エンドツーエンド暗号化バックアップを有効にしてください。",
-        tipAdIdReset: "広告識別子を定期的にリセットしてください。",
-        tipSandbox: "デバイスデータへのアクセスを制限するためにウェブ版を使用してください。"
+        btnCancel: "キャンセル", btnAdd: "追加して分析"
     }
 };
 
 // ────────────────────────────────────────────────────────────────────────────────
-// Core Engine
+// Core Logic
 // ────────────────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -597,7 +637,7 @@ function translateTerm(rawTerm, lang) {
     if (termsDict[cleanTerm] && termsDict[cleanTerm][lang]) {
         return termsDict[cleanTerm][lang];
     }
-    // Fallback: return English if available, otherwise raw
+    // Fallback: return English or clean term
     if (termsDict[cleanTerm] && termsDict[cleanTerm].en) {
         return termsDict[cleanTerm].en;
     }
@@ -774,7 +814,7 @@ function toggleAppSelection(appId) {
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
-// Store Search & App Addition
+// Store Search & Custom App Creation
 // ────────────────────────────────────────────────────────────────────────────────
 
 async function handlePrecisionStoreSearch(query) {
@@ -884,7 +924,6 @@ async function addVerifiedAppToStore(itunesItem) {
     const grade = tosdrData ? tosdrData.grade : 'E';
     const points = tosdrData ? tosdrData.points : getStandardPointsForGrade(grade);
 
-    // FIX: Use English keys for shared_with so they translate properly
     const verifiedApp = {
         id: appId,
         name: cleanName,
@@ -904,9 +943,7 @@ async function addVerifiedAppToStore(itunesItem) {
         exodus_trackers: Math.floor(Math.random() * 3) + 2,
         data_types: deriveRealDataTypes(category),
         shared_with: ["Third-Party Advertisers", "Analytics Partners", "Data Processors"],
-        permissions: deriveRealPermissions(category),
-        risks: [],
-        tips: []
+        permissions: deriveRealPermissions(category)
     };
 
     appsDataStore.unshift(verifiedApp);
@@ -966,9 +1003,8 @@ function deriveCategoryRiskScores(category, grade) {
     return { identity: 6, behavior: 8, content: 5, social: base };
 }
 
-// FIX: Return English keys so translateTerm can translate them
 function deriveRealDataTypes(category) {
-    if (category === 'social') return ["Facial & Media Biometrics", "Interests & Dwell Times", "Direct Messages & Photos", "GPS Location History", "Device Fingerprint & IP"];
+    if (category === 'social') return ["Facial Biometrics (Filters)", "Interests & Dwell Times", "Direct Message Content & Photos", "Precise GPS Location", "Device Fingerprint & IP"];
     if (category === 'productivity') return ["Account Info & Emails", "Content & File Attachments", "Work Habits", "Device ID & IP"];
     if (category === 'communication') return ["Phone Number / Account", "Delivery Address & Location", "Purchase History", "Device IP Info"];
     return ["Listening & Viewing History", "Device Type & Network", "Approximate Location", "Purchase History"];
@@ -989,7 +1025,7 @@ function getStandardPointsForGrade(grade) {
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
-// Dashboard & Analysis
+// Dashboard Calculation & Multi-Language Rendering
 // ────────────────────────────────────────────────────────────────────────────────
 
 function updateDashboard() {
@@ -1009,11 +1045,7 @@ function updateDashboard() {
     let allRisks = [];
     let allTips = [];
 
-    // Cycle through different risk/tip types per app
-    const riskKeys = ['riskSocialGraph', 'riskBiometrics', 'riskLocation', 'riskKeyboard'];
-    const tipKeys = ['tipPermissions', 'tipEncryptedBackup', 'tipAdIdReset', 'tipSandbox'];
-
-    selectedApps.forEach((app, index) => {
+    selectedApps.forEach((app) => {
         totalWeight += (app.weight || 15);
 
         const cats = app.categories || { identity: 7, behavior: 7, content: 7, social: 7 };
@@ -1022,18 +1054,30 @@ function updateDashboard() {
         categoriesSum.content += cats.content;
         categoriesSum.social += cats.social;
 
+        // Translate data types, shared_with, permissions
         (app.data_types || []).forEach(d => allDataTypes.add(translateTerm(d, currentLang)));
         (app.shared_with || []).forEach(s => allShared.add(translateTerm(s, currentLang)));
         (app.permissions || []).forEach(p => allPermissions.add(translateTerm(p, currentLang)));
 
-        // FIX: Use varied, localized risk/tip strings instead of raw Turkish from database
-        const riskKey = riskKeys[index % riskKeys.length];
-        const tipKey = tipKeys[index % tipKeys.length];
-        allRisks.push(`<b>${app.name}:</b> ${dict[riskKey]}`);
-        allTips.push(`<b>${app.name}:</b> ${dict[tipKey]}`);
+        // Retrieve app-specific localized risks & tips
+        const appRiskList = appRisksDict[app.id] ? (appRisksDict[app.id][currentLang] || appRisksDict[app.id].en) : null;
+        const appTipList = appTipsDict[app.id] ? (appTipsDict[app.id][currentLang] || appTipsDict[app.id].en) : null;
+
+        if (appRiskList) {
+            appRiskList.forEach(r => allRisks.push(`<b>${app.name}:</b> ${r}`));
+        }
+        if (appTipList) {
+            appTipList.forEach(t => allTips.push(`<b>${app.name}:</b> ${t}`));
+        }
     });
 
-    // Deduplicate
+    // Fallback if no specific risks/tips found for custom apps
+    if (allRisks.length === 0) {
+        selectedApps.forEach(app => {
+            allRisks.push(`<b>${app.name}:</b> Processes device & network metadata.`);
+        });
+    }
+
     allRisks = Array.from(new Set(allRisks)).slice(0, 6);
     allTips = Array.from(new Set(allTips)).slice(0, 5);
 
@@ -1159,7 +1203,7 @@ function updateRadarChart(dataValues) {
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
-// Modals
+// Modals & Utilities
 // ────────────────────────────────────────────────────────────────────────────────
 
 function showTosdrModal(appId) {
@@ -1266,10 +1310,6 @@ function closeModal() {
     if (modalOverlay) modalOverlay.classList.remove('active');
 }
 
-// ────────────────────────────────────────────────────────────────────────────────
-// Utilities
-// ────────────────────────────────────────────────────────────────────────────────
-
 function getAppEmojiIcon(name) {
     const n = name.toLowerCase();
     if (n.includes('ehliyet') || n.includes('sınav')) return '🚗';
@@ -1311,7 +1351,6 @@ function getFallbackApps() {
         categories: { identity: 8, behavior: 7, content: 6, social: 10 },
         data_types: ["Phone Number", "Contact Book", "Device ID & IP Address"],
         shared_with: ["Meta Companies", "Law Enforcement (Requests)"],
-        permissions: ["Contacts", "Camera", "Microphone", "Location"],
-        risks: [], tips: []
+        permissions: ["Contacts", "Camera", "Microphone", "Location"]
     }];
 }
